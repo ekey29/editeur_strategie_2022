@@ -1,0 +1,2 @@
+-on a remis bien les carré de fouilles (position et taille)
+-début de travail sur l'action  du bras mesureur
