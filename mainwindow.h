@@ -41,8 +41,8 @@
 #define BLUE 3
 #define EMPTY 4
 
-#define GLOBALOFFSETX 150
-#define GLOBALOFFSETY 125
+#define GLOBALOFFSETX -15
+#define GLOBALOFFSETY -40
 
 #define ORIGINE_X 0
 #define ORIGINE_Y 0

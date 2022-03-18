@@ -156,12 +156,12 @@ void MainWindow::initVisu()
     qDebug() << "init visu";
     ui->setupUi(this); //L'user Interface démarre
     scene = new QGraphicsScene;
-    scene->setSceneRect(-165,-165,3300,2250);
+    scene->setSceneRect(-165,-163,3300,2250);
     ui->graphicsView->setScene(scene);
     //Intégration des images pour la scene
     QPixmap tapis(":/Images/AgeOfBots/table.png");
     image = scene->addPixmap(tapis);
-    image->setOffset(-165,-165);
+    image->setOffset(-165,-163);
     ui->graphicsView->fitInView(scene->sceneRect(),Qt::KeepAspectRatio);
 
     QPixmap robot(":/Images/AgeOfBots/ROB2020.png");
@@ -628,7 +628,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
         // remove toutes les lignes de déplacement
         for(int i=0;i<7;i++)
             scene->removeItem(item[i]);
-        scene->removeItem(tempItem[0]);
+
         switch(indexComboBox)
         {
         case 0: //Début match
@@ -1245,11 +1245,10 @@ void MainWindow::updateVisu(const QModelIndex &index)
             else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="TEST")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
             {
-                QLine nik(0,0,500 + nbUpdateVisu * 10,500);
+
                 QPen penpen;
-                QGraphicsRectItem *rectitem ;
-                rectitem = new QGraphicsRectItem;
-                QRect rect(500,500,100,150);
+
+                QRect rect(0,0,100,150);
 
                 penpen.setColor(Qt::red);
                 penpen.setWidth(10);
@@ -1686,6 +1685,9 @@ void MainWindow::updateVisu(const QModelIndex &index)
             }
             break;
         }// sortie du switch action et deplacement
+
+        scene->removeItem(tempItem[0]);
+        tempItem[0]->setPos(PosXrob,PosYrob);
 
         //placement du theta entre 0 et 360°
         if(PosRotrob<0)
