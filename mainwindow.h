@@ -78,9 +78,10 @@ private:
 
     //QTableView *tableView;
 
+    //variable commune à chaque année
     QGraphicsScene *scene;
     QGraphicsPixmapItem *image;
-    QGraphicsPixmapItem *robot1, *robotdep,*ptrEchantillon[30],*ptrCarre[10];
+    QGraphicsPixmapItem *robot1, *robotdep;
     QGraphicsLineItem *lineUp;
     QGraphicsLineItem *lineDown;
     QGraphicsLineItem *lineRight;
@@ -92,8 +93,11 @@ private:
     QGraphicsLineItem *lineRandom;
     QGraphicsEllipseItem *ellipseRandom;
 
-    QGraphicsRectItem *tempItem[5];
-    QGraphicsLineItem *collisionLine[2];
+    //variables spécifiques à l'année 2022
+    QGraphicsPixmapItem *ptrEchantillon[30],*ptrCarre[10];
+    QGraphicsRectItem *brasMesure[2];
+    QGraphicsEllipseItem *ventouse[6];
+
 
 
 public:

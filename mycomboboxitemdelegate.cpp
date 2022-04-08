@@ -66,7 +66,7 @@ void MyComboBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 
             cb->addItem(QString("PRISE_SIMPLE"));
             cb->addItem(QString("PRISE_COMPLETE"));
-            cb->addItem(QString("PRISE_"));
+            cb->addItem(QString("PASSE"));
             cb->addItem(QString("RES_DEPL"));
             cb->addItem(QString("RES_MES"));
             cb->addItem(QString("RES_RANG"));

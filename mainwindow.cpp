@@ -13,30 +13,25 @@ const QStringList MainWindow::dataCol1 = {"Debut Match",
 const QStringList MainWindow::dataEquipe = {"Jaune",
                                             "Bleu"};
 
-const QStringList MainWindow::dataAction = {"BRAS_AT",
-                                            "BRAS_RE",
-                                            "VENT_AT",
-                                            "VENT_RE",
-                                            "GABARIT_ROBOT",
-                                            "HAUT_FOND",
-                                            "BAS_MANCHE",
-                                            "MOY_MANCHE",
-                                            "HAUT_MANCHE",
-                                            "LECTURE",
-                                            "BON_PORT",
-                                            "ATTENDRE",
-                                            "BRAS_PREPA",
-                                            "BRAS_POSE"};
+
+const QStringList MainWindow::dataAction = {"PRISE_SIMPLE",
+                                            "PRISE_COMPLETE",
+                                            "PASSE",
+                                            "RES_DEPL",
+                                            "RES_MES",
+                                            "RES_RANG"};
 
 int carreFlag = 1;
 
-int coordonnees[30][5]{ // coordonnées des échantillons {x,y,COULEUR,face,rotation}
+int bras[6]{-1,-1,-1,-1,-1,-1}; //tableau qui stocke quel échantillon est attrapé par quel bras. -1 permet d'indiquer un bras sans échantillon
+
+int coordonnees[30][5]{ // coordonnées des échantillons {x,y,COULEUR,etat,rotation}
     // face : 0-> caché ; 1-> retourné ; 2-> debout
     //0 ->11 échantillon au sol ; 12->17 site de fouilles ;18->29 distributeurs;
 
-    {900,555,BLUE,0}, // au sol côté jaune
-    {830,679,GREEN,0},
-    {900,805,RED,0},
+    {900,555,BLUE,0,0}, // au sol côté jaune
+    {830,679,GREEN,0,0},
+    {900,805,RED,0,0},
 
     {-65,300,GREEN,0}, // en hauteur côté jaune
     {121,1688,BLUE,0,-45},
@@ -90,8 +85,10 @@ MainWindow::MainWindow(QWidget *parent)
                     new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem}
     ,ptrCarre{new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,
               new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem}
-    ,tempItem{new QGraphicsRectItem,new QGraphicsRectItem,new QGraphicsRectItem,new QGraphicsRectItem,new QGraphicsRectItem,}
-    ,collisionLine{new QGraphicsLineItem,new QGraphicsLineItem}
+    ,brasMesure{new QGraphicsRectItem,new QGraphicsRectItem}
+    ,ventouse{new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,
+              new QGraphicsEllipseItem }
+
 {
 
     initVisu();
@@ -596,7 +593,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
 
 
-    qDebug() << nbUpdateVisu;
+    qDebug() << nbUpdateVisu << "______________________________________________________________________________________________________";
 
     int cpt_boucle=0;
     while((table_ligne<index.row()+1)&&(cpt_boucle<(2*(ui->tableView->model()->rowCount())))) // on suit les numero de lignes et on bloque la boucle infini à 2 occurences
@@ -630,7 +627,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
         // remove toutes les lignes de déplacement
         for(int i=0;i<7;i++)
             scene->removeItem(item[i]);
-        //scene->removeItem(tempItem[0]);
+
 
         switch(indexComboBox)
         {
@@ -1131,120 +1128,25 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 }
             }
             //Fonctions correspondant au type d'action selectionnée
-            if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="VENT_AT")
-                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
-            {   //
-                centaine=numero_action/100;
-                if((centaine)!=0)
-                    Ventouse_Action_Gobelet[centaine][0]=ON;
-                dizaine=(numero_action-centaine*100)/10;
-                if((dizaine)!=0)
-                    Ventouse_Action_Gobelet[dizaine][0]=ON;
-                unite=(numero_action-centaine*100-dizaine*10);
-                Ventouse_Action_Gobelet[unite][0]=ON;
-                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,7),"Enchainement");
+            if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="PRISE_SIMPLE")
+                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
+
+                QRect kek(0,0,54,54);
+
+                int brasChoisi = ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt();
+                ventouse[0] = scene->addEllipse(kek);
+                ventouse[0]->setPen(redline);
+                ventouse[0]->setTransformOriginPoint(ventouse[0]->boundingRect().center());
+                ventouse[0]->setPos(PosYrob + 92.5 + 54 , PosXrob);
+                ventouse[0]->setZValue(1);
+
+                if(ptrEchantillon[1]->boundingRect().contains(ventouse[0]->boundingRect().center())){
+                    qDebug() << "LE PODEEEEEEEEEER__________________________________________________________________";
+                }
+                else qDebug() << "nopoder___________________________________________________________________________";
+
             }
 
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="VENT_RE")
-                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
-            {
-                centaine=numero_action/100;
-                if((centaine)!=0)
-                {
-                    Ventouse_Action_Gobelet[centaine][0]=OFF;
-                    Ventouse_Action_Gobelet[centaine][1]=100;
-                }
-                dizaine=(numero_action-centaine*100)/10;
-                if((dizaine)!=0)
-                {
-                    Ventouse_Action_Gobelet[dizaine][0]=OFF;
-                    Ventouse_Action_Gobelet[dizaine][1]=100;
-                }
-                unite=(numero_action-centaine*100-dizaine*10);
-                Ventouse_Action_Gobelet[unite][0]=OFF;
-                Ventouse_Action_Gobelet[unite][1]=100;
-                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,7),"Enchainement");
-            }
-
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="BRAS_AT")
-                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
-            {
-                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,7),"Attendre");
-                centaine=numero_action/100;
-                dizaine=(numero_action-centaine*100)/10;
-                unite=(numero_action-centaine*100-dizaine*10);
-                int nbre_bras=0;
-                if(centaine!=0)
-                    nbre_bras=3;
-                else if(dizaine!=0)
-                    nbre_bras=2;
-                else
-                    nbre_bras=1;
-                for(int boucle=0;boucle<nbre_bras;boucle++)
-                {
-                    if(boucle==0)
-                        numero_action=unite;
-                    else if(boucle==1)
-                        numero_action=dizaine;
-                    else
-                        numero_action=centaine;
-
-                    if((int(PosRotrob)%180==0)) // angle 0 ou 180° on peut prendre des gobeletes dans les ecceuils non atribués
-                    {
-                        for(int j=5;j<10;j++) // parcours des gobeletes de l'ecceuil non attribué coté bleu
-                        {
-                            Yoffset=Ventouse_coo[numero_action][0]*sin(((PosRotrob) * M_PI)/180)+Ventouse_coo[numero_action][1]*cos(((PosRotrob) * M_PI)/180);
-                            Xoffset=Ventouse_coo[numero_action][0]*cos(((PosRotrob) * M_PI)/180)-Ventouse_coo[numero_action][1]*sin(((PosRotrob) * M_PI)/180);
-                            if((PosXrob+Xoffset-125<Gobelet_coord_ecueil[j][0])&&(PosXrob+Xoffset-15>Gobelet_coord_ecueil[j][0])
-                                    &&(PosYrob+Yoffset+15>Gobelet_coord_ecueil[j][1])&&(PosYrob+Yoffset-15<Gobelet_coord_ecueil[j][1]))
-                            {
-                                Bras_Action_Gobelet[numero_action][1]=j;
-                                Bras_Action_Gobelet[numero_action][0]=ON;
-                                Bras_Action_Gobelet[numero_action][2]=OFF;
-                            }
-                        }
-                        for(int j=15;j<20;j++) // parcours des gobeletes de l'ecceuil non attribué coté jaune
-                        {
-                            Yoffset=Ventouse_coo[numero_action][0]*sin(((PosRotrob) * M_PI)/180)+Ventouse_coo[numero_action][1]*cos(((PosRotrob) * M_PI)/180);
-                            Xoffset=Ventouse_coo[numero_action][0]*cos(((PosRotrob) * M_PI)/180)-Ventouse_coo[numero_action][1]*sin(((PosRotrob) * M_PI)/180);
-                            if((PosXrob+Xoffset-125<Gobelet_coord_ecueil[j][0])&&(PosXrob+Xoffset-15>Gobelet_coord_ecueil[j][0])
-                                    &&(PosYrob+Yoffset+15>Gobelet_coord_ecueil[j][1])&&(PosYrob+Yoffset-15<Gobelet_coord_ecueil[j][1]))
-                            {
-                                Bras_Action_Gobelet[numero_action][1]=j;
-                                Bras_Action_Gobelet[numero_action][0]=ON;
-                                Bras_Action_Gobelet[numero_action][2]=OFF;
-                            }
-                        }
-                    }
-                    else if(abs(int(PosRotrob))%180==90) // angle 90 ou -90 on peut prendre des gobeletes dans les ecceuils bleu ou jaune
-                    {
-                        for(int j=0;j<5;j++) // parcours des gobeletes de l'ecceuil attribuéau bleu
-                        {
-                            Yoffset=Ventouse_coo[numero_action][0]*sin(((PosRotrob) * M_PI)/180)+Ventouse_coo[numero_action][1]*cos(((PosRotrob) * M_PI)/180);
-                            Xoffset=Ventouse_coo[numero_action][0]*cos(((PosRotrob) * M_PI)/180)-Ventouse_coo[numero_action][1]*sin(((PosRotrob) * M_PI)/180);
-                            if((PosXrob+Xoffset-15<Gobelet_coord_ecueil[j][0])&&(PosXrob+Xoffset+15>Gobelet_coord_ecueil[j][0])
-                                    &&(PosYrob+Yoffset-15>Gobelet_coord_ecueil[j][1])&&(PosYrob+Yoffset-125<Gobelet_coord_ecueil[j][1]))
-                            {
-                                Bras_Action_Gobelet[numero_action][1]=j;
-                                Bras_Action_Gobelet[numero_action][0]=ON;
-                                Bras_Action_Gobelet[numero_action][2]=OFF;
-                            }
-                        }
-                        for(int j=10;j<15;j++) // parcours des gobeletes de l'ecceuil attribué jaune
-                        {
-                            Yoffset=Ventouse_coo[numero_action][0]*sin(((PosRotrob) * M_PI)/180)+Ventouse_coo[numero_action][1]*cos(((PosRotrob) * M_PI)/180);
-                            Xoffset=Ventouse_coo[numero_action][0]*cos(((PosRotrob) * M_PI)/180)-Ventouse_coo[numero_action][1]*sin(((PosRotrob) * M_PI)/180);
-                            if((PosXrob+Xoffset-15<Gobelet_coord_ecueil[j][0])&&(PosXrob+Xoffset+15>Gobelet_coord_ecueil[j][0])
-                                    &&(PosYrob+Yoffset+125>Gobelet_coord_ecueil[j][1])&&(PosYrob+Yoffset+15<Gobelet_coord_ecueil[j][1]))
-                            {
-                                Bras_Action_Gobelet[numero_action][1]=j;
-                                Bras_Action_Gobelet[numero_action][0]=ON;
-                                Bras_Action_Gobelet[numero_action][2]=OFF;
-                            }
-                        }
-                     }
-                }
-            }
             else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="RES_DEPL")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
             {
@@ -1254,11 +1156,11 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
             {
                 int carreMesure = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
-                if (tempItem[0]->collidesWithItem(ptrCarre[carreMesure])){
+                if (brasMesure[0]->collidesWithItem(ptrCarre[carreMesure])){
                     qDebug() << "on est laaaaaa (0)";
                     ptrCarre[carreMesure]->hide();
                 }
-                else if (tempItem[1]->collidesWithItem(ptrCarre[carreMesure])){
+                else if (brasMesure[1]->collidesWithItem(ptrCarre[carreMesure])){
                     qDebug() << "on est laaaaaa (1)";
                     ptrCarre[carreMesure]->hide();
                 }
@@ -1270,141 +1172,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
             }
 
 
-            else if((((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="BRAS_RE")
-                         &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
-                    ||(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="BRAS_POSE")
-                         &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")))
-            {
-                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,7),"Attendre");
-                centaine=numero_action/100;
-                dizaine=(numero_action-centaine*100)/10;
-                unite=(numero_action-centaine*100-dizaine*10);
-                int nbre_bras=0;
-                if(centaine!=0)
-                    nbre_bras=3;
-                else if(dizaine!=0)
-                    nbre_bras=2;
-                else
-                    nbre_bras=1;
-                for(int boucle=0;boucle<nbre_bras;boucle++)
-                {
-                    if(boucle==0)
-                        numero_action=unite;
-                    else if(boucle==1)
-                        numero_action=dizaine;
-                    else
-                        numero_action=centaine;
-                    int numero_gobelet=Bras_Action_Gobelet[numero_action][1];
-                    Yoffset=(Ventouse_coo[numero_action][0]*1.6)*sin(((PosRotrob) * M_PI)/180)+Ventouse_coo[numero_action][1]*cos(((PosRotrob) * M_PI)/180);
-                    Xoffset=(Ventouse_coo[numero_action][0]*1.6)*cos(((PosRotrob) * M_PI)/180)-Ventouse_coo[numero_action][1]*sin(((PosRotrob) * M_PI)/180);
-                    Gobelet_coord_ecueil[numero_gobelet][0]=uint(PosXrob + Xoffset-36);
-                    Gobelet_coord_ecueil[numero_gobelet][1]=uint(PosYrob + Yoffset-36);
-                    Gobelet[numero_gobelet+24]->setPos(Gobelet_coord_ecueil[numero_gobelet][1], Gobelet_coord_ecueil[numero_gobelet][0]);
-                    Bras_Action_Gobelet[numero_action][1]=100;
-                    Bras_Action_Gobelet[numero_action][0]=OFF;
-                    Bras_Action_Gobelet[numero_action][2]=OFF; // pas en prepa
-                }
-            }
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="HAUT_FOND")
-                    &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
-            {
 
-            }
-
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="BAS_MANCHE")
-                    &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
-            {
-                if(numero_manche==0)
-                {
-                    Manche_Air_Action[numero_manche]=ON;
-                }
-                else if(numero_manche==1)
-                {
-                    Manche_Air_Action[numero_manche]=ON;
-                }
-                Manche_Air_Couleur = 1;
-                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,7),"Attendre");
-            }
-
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="MOY_MANCHE")
-                    &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
-            {
-                if(numero_manche==0)
-                {
-                    Manche_Air_Action[numero_manche]=ON;
-                }
-                else if(numero_manche==1)
-                {
-                    Manche_Air_Action[numero_manche]=ON;
-                }
-                Manche_Air_Couleur = 2;
-                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,7),"Attendre");
-            }
-
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="HAUT_MANCHE")
-                    &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
-            {
-                if(numero_manche==0)
-                {
-                    Manche_Air_Action[numero_manche]=OFF;
-                }
-                else if(numero_manche==1)
-                {
-                    Manche_Air_Action[numero_manche]=OFF;
-                }
-                Manche_Air_Couleur = 0;
-                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,7),"Attendre");
-            }
-
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="LECTURE"))
-            {
-                if((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="0")
-                {
-                    ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,3),0);
-                }
-                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,7),"Attendre");
-            }
-
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="BON_PORT"))
-            {
-                if((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="0")
-                {
-                    ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,3),0);
-                }
-                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,7),"Enchainement");
-            }
-
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="ATTENDRE")
-                    &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
-            {
-                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,7),"Attendre");
-            }
-
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="BRAS_PREPA")
-                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
-            {
-                centaine=numero_action/100;
-                dizaine=(numero_action-centaine*100)/10;
-                unite=(numero_action-centaine*100-dizaine*10);
-                int nbre_bras=0;
-                if(centaine!=0)
-                    nbre_bras=3;
-                else if(dizaine!=0)
-                    nbre_bras=2;
-                else
-                    nbre_bras=1;
-                for(int boucle=0;boucle<nbre_bras;boucle++)
-                {
-                    if(boucle==0)
-                        numero_action=unite;
-                    else if(boucle==1)
-                        numero_action=dizaine;
-                    else
-                        numero_action=centaine;
-                    Bras_Action_Gobelet[numero_action][2]=ON;
-                }
-
-            }
             break;
 
         case 5: //Recalage
@@ -1823,16 +1591,16 @@ void MainWindow::updateVisu(const QModelIndex &index)
             }
 
             if(resDeploye[0]){
-                scene->removeItem(tempItem[0]); // on supprime le bras
+                scene->removeItem(brasMesure[0]); // on supprime le bras
 
                 int signeoffset0;
                 QRect rect0(0,0,100,150);
 
 
                 //on ajoutre le bras et place son point de transformation au point de contact avec le robot
-                tempItem[0]= scene->addRect(rect0);
-                tempItem[0]->setPen(redline);
-                tempItem[0]->setTransformOriginPoint(tempItem[0]->boundingRect().center().x(),0);
+                brasMesure[0]= scene->addRect(rect0);
+                brasMesure[0]->setPen(redline);
+                brasMesure[0]->setTransformOriginPoint(brasMesure[0]->boundingRect().center().x(),0);
 
 
 
@@ -1845,24 +1613,24 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
                 //les sin et les cos permettent au bras de se déplacer sur un cercle pour suivre la rotation du robot
                 // -40 et -5 sont la pour corriger manuellement quelques imperfection pour s'assurer que le bras est bien centré
-                tempItem[0]->setPos(PosYrob  - 40*signeoffset0 + 285*cos(PosRotrob*(M_PI/180)),PosXrob - 285*sin(PosRotrob*(M_PI/180)) -5*signeoffset0);
-                tempItem[0]->setRotation(90 - PosRotrob);
+                brasMesure[0]->setPos(PosYrob  - 40*signeoffset0 + 285*cos(PosRotrob*(M_PI/180)),PosXrob - 285*sin(PosRotrob*(M_PI/180)) -5*signeoffset0);
+                brasMesure[0]->setRotation(90 - PosRotrob);
 
 
             }
             else
-                scene->removeItem(tempItem[0]);
+                scene->removeItem(brasMesure[0]);
 
             if(resDeploye[1]){
-                scene->removeItem(tempItem[1]); // on supprime le bras
+                scene->removeItem(brasMesure[1]); // on supprime le bras
 
                 int signeoffset1;
                 QRect rect1(0,0,100,150);
 
                 //on ajoutre le bras et place son point de transformation au point de contact avec le robot
-                tempItem[1]= scene->addRect(rect1);
-                tempItem[1]->setPen(redline);
-                tempItem[1]->setTransformOriginPoint(tempItem[1]->boundingRect().center().x(),0);
+                brasMesure[1]= scene->addRect(rect1);
+                brasMesure[1]->setPen(redline);
+                brasMesure[1]->setTransformOriginPoint(brasMesure[1]->boundingRect().center().x(),0);
 
                 //on détermine l'offset
                 if(PosRotrob <= 90 || PosRotrob >= 270) signeoffset1 = 1;
@@ -1870,11 +1638,11 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
                 //les sin et les cos permettent au bras de se déplacer sur un cercle pour suivre la rotation du robot
                 // -60 et -5 sont la pour corriger manuellement quelques imperfection pour s'assurer que le bras est bien centré
-                tempItem[1]->setPos(PosYrob -25 - 150*cos(PosRotrob*(M_PI/180)),PosXrob + 150*sin(PosRotrob*(M_PI/180)));
-                tempItem[1]->setRotation(90 - PosRotrob);
+                brasMesure[1]->setPos(PosYrob -25 - 150*cos(PosRotrob*(M_PI/180)),PosXrob + 150*sin(PosRotrob*(M_PI/180)));
+                brasMesure[1]->setRotation(90 - PosRotrob);
             }
             else
-                scene->removeItem(tempItem[1]);
+                scene->removeItem(brasMesure[1]);
 
             qDebug() << "cos(M_PI) = " << cos(M_PI);
             qDebug() << "cos(180) = " << cos(180);
@@ -2141,48 +1909,25 @@ void MainWindow::on_ExportFileButton_clicked()
             data2 = ui->tableView->model()->data(testindex).toString();
             indexComboBoxAction = dataAction.indexOf(data2);
             switch(indexComboBoxAction){
-            case 0: //BRAS_AT
+            case 0: //PRISE_SIMPLE
                 textStream << "151";
                 break;
-            case 1: //BRAS_RE
+            case 1: //PRISE_COMPLETE
                 textStream << "152";
                 break;
-            case 2: //VENT_AT
+            case 2: //PASSE
                 textStream << "153";
                 break;
-            case 3: //VENT_RE
+            case 3: //RES_DEPL
                 textStream << "154";
                 break;
-            case 4: //GABARIT_ROBOT
+            case 4: //RES_MES
                 textStream << "155";
                 break;
-            case 5: //HAUT_FOND
+            case 5: //RES_RANG
                 textStream << "156";
                 break;
-            case 6: //BAS_MANCHE
-                textStream << "157";
-                break;
-            case 7: //MOY_MANCHE
-                textStream << "158";
-                break;
-            case 8: //HAUT_MANCHE
-                textStream << "159";
-                break;
-            case 9: //LECTURE
-                textStream << "160";
-                break;
-            case 10: //BON_PORT
-                textStream << "161";
-                break;
-            case 11 : //ATTENDRE
-                textStream << "162";
-                break;
-            case 12 : //BRAS_PREPA
-                textStream << "163";
-                break;
-            case 13 : //BRAS_POSE
-                textStream << "164";
-                break;
+
             }
             textStream << ",";
                           testindex = ui->tableView->model()->index(i,3);
