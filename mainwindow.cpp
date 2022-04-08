@@ -91,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
     ,ptrCarre{new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,
               new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem}
     ,tempItem{new QGraphicsRectItem,new QGraphicsRectItem,new QGraphicsRectItem,new QGraphicsRectItem,new QGraphicsRectItem,}
+    ,collisionLine{new QGraphicsLineItem,new QGraphicsLineItem}
 {
 
     initVisu();
@@ -112,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableView->model()->insertRow(ui->tableView->model()->rowCount());
     ui->tableView->model()->setData(ui->tableView->model()->index(0,0),0);
     ui->tableView->model()->setData(ui->tableView->model()->index(0,1),dataCol1.at(0));
-    ui->tableView->model()->setData(ui->tableView->model()->index(0,2),dataEquipe.at(1));
+    ui->tableView->model()->setData(ui->tableView->model()->index(0,2),dataEquipe.at(0));
     ui->tableView->model()->setData(ui->tableView->model()->index(0,3),90);
     ui->tableView->model()->setData(ui->tableView->model()->index(0,4),675);
     ui->tableView->model()->setData(ui->tableView->model()->index(0,5),250);
@@ -156,24 +157,24 @@ void MainWindow::initVisu()
     qDebug() << "init visu";
     ui->setupUi(this); //L'user Interface démarre
     scene = new QGraphicsScene;
-    scene->setSceneRect(-165,-163,3300,2250);
+    scene->setSceneRect(-165,-165,3300,2250);
     ui->graphicsView->setScene(scene);
     //Intégration des images pour la scene
     QPixmap tapis(":/Images/AgeOfBots/table.png");
     image = scene->addPixmap(tapis);
-    image->setOffset(-165,-163);
+    image->setOffset(-165,-165);
     ui->graphicsView->fitInView(scene->sceneRect(),Qt::KeepAspectRatio);
 
     QPixmap robot(":/Images/AgeOfBots/ROB2020.png");
 
     robot1 = scene->addPixmap(robot);
     robot1->setOffset(-robot1->boundingRect().center().x() + GLOBALOFFSETX,
-                      -robot1->boundingRect().center().y() + GLOBALOFFSETY);
+                      -robot1->boundingRect().center().y() + GLOBALOFFSETY + 45);
     robot1->setPos(0,0); //Le robot est positionné
     robot1->setRotation(90);
     robotdep = scene->addPixmap(robot);
     robotdep->setOffset(-robotdep->boundingRect().center().x() + GLOBALOFFSETX,
-                        -robotdep->boundingRect().center().y() + GLOBALOFFSETY);
+                        -robotdep->boundingRect().center().y() + GLOBALOFFSETY + 45);
     robotdep->setPos(0,0); //Le robot est positionné
     robotdep->setRotation(90);
 
@@ -438,6 +439,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
     int newValue;
 
     QGraphicsLineItem *brasmes[3];
+    bool resDeploye[2];
 
     check = ui->checkBox->isChecked();
     setWindowTitle("éditeur de stratégie 2022 - Age of Bots - 1.5.1");
@@ -628,6 +630,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
         // remove toutes les lignes de déplacement
         for(int i=0;i<7;i++)
             scene->removeItem(item[i]);
+        //scene->removeItem(tempItem[0]);
 
         switch(indexComboBox)
         {
@@ -1242,30 +1245,28 @@ void MainWindow::updateVisu(const QModelIndex &index)
                      }
                 }
             }
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="TEST")
+            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="RES_DEPL")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
             {
-
-                QPen penpen;
-
-                QRect rect(0,0,100,150);
-
-                penpen.setColor(Qt::red);
-                penpen.setWidth(10);
-
-
-                tempItem[0]= scene->addRect(rect);
-                tempItem[0]->setPos(PosYrob,PosXrob);
-                tempItem[0]->setPen(penpen);
-
-
-
-                /*brasmes[0]->setPen(penpen);
-                penpen.setColor(Qt::red);
-                penpen.setWidth(10);
-
-                brasmes[0] = scene->addLine(nik);
-                brasmes[0]->setPos(800 + 100* nbUpdateVisu,800);*/
+                resDeploye[(ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt())] = true;
+            }
+            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="RES_MES")
+                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
+            {
+                int carreMesure = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
+                if (tempItem[0]->collidesWithItem(ptrCarre[carreMesure])){
+                    qDebug() << "on est laaaaaa (0)";
+                    ptrCarre[carreMesure]->hide();
+                }
+                else if (tempItem[1]->collidesWithItem(ptrCarre[carreMesure])){
+                    qDebug() << "on est laaaaaa (1)";
+                    ptrCarre[carreMesure]->hide();
+                }
+            }
+            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="RES_RANG")
+                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
+            {
+                resDeploye[(ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt())] = false;
             }
 
 
@@ -1686,9 +1687,6 @@ void MainWindow::updateVisu(const QModelIndex &index)
             break;
         }// sortie du switch action et deplacement
 
-        scene->removeItem(tempItem[0]);
-        tempItem[0]->setPos(PosXrob,PosYrob);
-
         //placement du theta entre 0 et 360°
         if(PosRotrob<0)
         {
@@ -1823,6 +1821,63 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 }
 
             }
+
+            if(resDeploye[0]){
+                scene->removeItem(tempItem[0]); // on supprime le bras
+
+                int signeoffset0;
+                QRect rect0(0,0,100,150);
+
+
+                //on ajoutre le bras et place son point de transformation au point de contact avec le robot
+                tempItem[0]= scene->addRect(rect0);
+                tempItem[0]->setPen(redline);
+                tempItem[0]->setTransformOriginPoint(tempItem[0]->boundingRect().center().x(),0);
+
+
+
+
+                //on détermine l'offset
+                if(PosRotrob <= 90 || PosRotrob >= 270) signeoffset0 = 1;
+                else signeoffset0 = 0;
+
+
+
+                //les sin et les cos permettent au bras de se déplacer sur un cercle pour suivre la rotation du robot
+                // -40 et -5 sont la pour corriger manuellement quelques imperfection pour s'assurer que le bras est bien centré
+                tempItem[0]->setPos(PosYrob  - 40*signeoffset0 + 285*cos(PosRotrob*(M_PI/180)),PosXrob - 285*sin(PosRotrob*(M_PI/180)) -5*signeoffset0);
+                tempItem[0]->setRotation(90 - PosRotrob);
+
+
+            }
+            else
+                scene->removeItem(tempItem[0]);
+
+            if(resDeploye[1]){
+                scene->removeItem(tempItem[1]); // on supprime le bras
+
+                int signeoffset1;
+                QRect rect1(0,0,100,150);
+
+                //on ajoutre le bras et place son point de transformation au point de contact avec le robot
+                tempItem[1]= scene->addRect(rect1);
+                tempItem[1]->setPen(redline);
+                tempItem[1]->setTransformOriginPoint(tempItem[1]->boundingRect().center().x(),0);
+
+                //on détermine l'offset
+                if(PosRotrob <= 90 || PosRotrob >= 270) signeoffset1 = 1;
+                else signeoffset1 = 0;
+
+                //les sin et les cos permettent au bras de se déplacer sur un cercle pour suivre la rotation du robot
+                // -60 et -5 sont la pour corriger manuellement quelques imperfection pour s'assurer que le bras est bien centré
+                tempItem[1]->setPos(PosYrob -25 - 150*cos(PosRotrob*(M_PI/180)),PosXrob + 150*sin(PosRotrob*(M_PI/180)));
+                tempItem[1]->setRotation(90 - PosRotrob);
+            }
+            else
+                scene->removeItem(tempItem[1]);
+
+            qDebug() << "cos(M_PI) = " << cos(M_PI);
+            qDebug() << "cos(180) = " << cos(180);
         }
         for(int i=0;i<6;i++)
         {
@@ -2485,4 +2540,5 @@ void MainWindow::afficherEchantillon(int i){
     ptrEchantillon[i]->setTransformOriginPoint(ptrEchantillon[i]->boundingRect().center());//cela met le point de rotation au centre au lieu d'en haut à droite
     ptrEchantillon[i]->setRotation(coordonnees[i][4]);
 }
+
 

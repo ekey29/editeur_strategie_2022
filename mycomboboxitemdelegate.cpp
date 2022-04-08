@@ -63,21 +63,13 @@ void MyComboBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 
         else if(model->data(model->index(index.row(), 1),Qt::DisplayRole).toString().contains("Action"))
         {
-            cb->addItem(QString("BRAS_AT"));
-            cb->addItem(QString("BRAS_RE"));
-            cb->addItem(QString("VENT_AT"));
-            cb->addItem(QString("VENT_RE"));
-            cb->addItem(QString("GABARIT_ROBOT"));
-            cb->addItem(QString("HAUT_FOND"));
-            cb->addItem(QString("BAS_MANCHE"));
-            cb->addItem(QString("MOY_MANCHE"));
-            cb->addItem(QString("HAUT_MANCHE"));
-            cb->addItem(QString("LECTURE"));
-            cb->addItem(QString("BON_PORT"));
-            cb->addItem(QString("ATTENDRE"));
-            cb->addItem(QString("BRAS_PREPA"));
-            cb->addItem(QString("BRAS_POSE"));
-            cb->addItem(QString("TEST"));
+
+            cb->addItem(QString("PRISE_SIMPLE"));
+            cb->addItem(QString("PRISE_COMPLETE"));
+            cb->addItem(QString("PRISE_"));
+            cb->addItem(QString("RES_DEPL"));
+            cb->addItem(QString("RES_MES"));
+            cb->addItem(QString("RES_RANG"));
             cb->setCurrentText(model->data(index).toString());
         }
 //        else if(model->data(model->index(index.row(), 0),Qt::DisplayRole).toString().contains("Ligne Droite"))

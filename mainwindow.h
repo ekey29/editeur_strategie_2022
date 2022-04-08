@@ -28,10 +28,10 @@
 
 #define LONGUEUR_TABLE 3000
 #define LARGEUR_TABLE 2000
-#define LONGUEUR_ROBOT 240
-#define LARGEUR_ROBOT 230
+#define LONGUEUR_ROBOT 185
+#define LARGEUR_ROBOT 270
 #define LARGEUR_VENTOUSE 150
-#define DIAG_ROBOT1 300
+#define DIAG_ROBOT1 327
 
 #define OFF 0
 #define ON 1
@@ -91,7 +91,9 @@ private:
     QGraphicsLineItem *ligneDroite;
     QGraphicsLineItem *lineRandom;
     QGraphicsEllipseItem *ellipseRandom;
+
     QGraphicsRectItem *tempItem[5];
+    QGraphicsLineItem *collisionLine[2];
 
 
 public:
