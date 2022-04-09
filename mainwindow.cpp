@@ -129,19 +129,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->lcdPosY->display(250);
     ui->lcdPosT->display(90);
 
-    ui->tableView->setColumnWidth(0,15);
-    ui->tableView->setColumnWidth(1,70);
-    ui->tableView->setColumnWidth(2,70);
-    ui->tableView->setColumnWidth(3,70);
-    ui->tableView->setColumnWidth(4,70);
-    ui->tableView->setColumnWidth(5,70);
-    ui->tableView->setColumnWidth(6,45);
-    ui->tableView->setColumnWidth(7,45);
-    ui->tableView->setColumnWidth(8,10);
-    ui->tableView->setColumnWidth(9,10);
-    ui->tableView->setColumnWidth(10,15);
-    ui->tableView->setColumnWidth(11,15);
-
 //    ui->graphicsView->setMouseTracking(true);
 //    QWidget::connect (ui->graphicsView, SIGNAL(sendMousePoint(QPointF)),this, SLOT(setMousePoint(QPointF)));
 
@@ -153,6 +140,11 @@ void MainWindow::initVisu()
 {
     qDebug() << "init visu";
     ui->setupUi(this); //L'user Interface démarre
+
+    // positions des splitter en fixant les zones qui ont le plus d'espace (à gauche et en haut à droite)
+    ui->splitterHoriz->setStretchFactor(0,1);
+    ui->splitterVerti->setStretchFactor(0,1);
+
     scene = new QGraphicsScene;
     scene->setSceneRect(-165,-165,3300,2250);
     ui->graphicsView->setScene(scene);
@@ -315,19 +307,6 @@ void MainWindow::setHeaderComboBox(int index)
         ui->tableView->setItemDelegateForColumn(7,cbd);
         break;
     }
-    ui->tableView->setColumnWidth(0,15);
-    ui->tableView->setColumnWidth(1,70);
-    ui->tableView->setColumnWidth(2,70);
-    ui->tableView->setColumnWidth(3,70);
-    ui->tableView->setColumnWidth(4,70);
-    ui->tableView->setColumnWidth(5,70);
-    ui->tableView->setColumnWidth(6,45);
-    ui->tableView->setColumnWidth(7,45);
-    ui->tableView->setColumnWidth(8,10);
-    ui->tableView->setColumnWidth(9,10);
-    ui->tableView->setColumnWidth(10,15);
-    ui->tableView->setColumnWidth(11,15);
-
 }
 
 
