@@ -160,7 +160,7 @@ void MainWindow::initVisu()
     image = scene->addPixmap(tapis);
     image->setOffset(-165,-165);
 
-    QPixmap robot(":/Images/AgeOfBots/ROB2020.png");
+    QPixmap robot(":/Images/AgeOfBots/ROB2020_save.png");
 
     robot1 = scene->addPixmap(robot);
     robot1->setOffset(-robot1->boundingRect().center().x() + GLOBALOFFSETX,
@@ -172,6 +172,10 @@ void MainWindow::initVisu()
                         -robotdep->boundingRect().center().y() + GLOBALOFFSETY + 45);
     robotdep->setPos(0,0); //Le robot est positionné
     robotdep->setRotation(90);
+
+
+
+
 
     //Création des bordures virtuelles
     QPen redline(Qt::red);
@@ -425,6 +429,8 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
     check = ui->checkBox->isChecked();
     setWindowTitle("éditeur de stratégie 2022 - Age of Bots - 1.5.1");
+
+
 
 
 
@@ -1126,10 +1132,11 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 ventouse[0] = scene->addEllipse(kek);
                 ventouse[0]->setPen(redline);
                 ventouse[0]->setTransformOriginPoint(ventouse[0]->boundingRect().center());
-                ventouse[0]->setPos(PosYrob + 92.5 + 285*cos(PosRotrob*(M_PI/180)) + 54 , PosXrob - 285*cos(PosRotrob*(M_PI/180)));
-                ventouse[0]->setZValue(1);
+                ventouse[0]->setPos(robot1->pos().x() + GLOBALOFFSETX - 25,robot1->pos().y() + GLOBALOFFSETY + 15);
+                ventouse[0]->moveBy(212.5*sin(((PosRotrob) * M_PI)/180) , 212.5*cos(((PosRotrob) * M_PI)/180));
 
-                if(ptrEchantillon[1]->boundingRect().contains(ventouse[0]->boundingRect().center())){
+
+                if(ptrEchantillon[1]->boundingRect().contains(ventouse[0]->boundingRect())){
                     qDebug() << "LE PODEEEEEEEEEER__________________________________________________________________";
 
                 }
