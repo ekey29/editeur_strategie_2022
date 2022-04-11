@@ -141,9 +141,14 @@ void MainWindow::initVisu()
     qDebug() << "init visu";
     ui->setupUi(this); //L'user Interface démarre
 
-    // positions des splitter en fixant les zones qui ont le plus d'espace (à gauche et en haut à droite)
-    ui->splitterHoriz->setStretchFactor(0,1);
-    ui->splitterVerti->setStretchFactor(0,1);
+    // positions initiales des splitter en fixant les zones
+    QList<int> size(2);
+    size[0] = 0.5 * width();
+    size[1] = width() - size[0];
+    ui->splitterHoriz->setSizes(size);
+    size[0] = 0.75 * height();
+    size[1] = height() - size[0];
+    ui->splitterVerti->setSizes(size);
 
     scene = new QGraphicsScene;
     scene->setSceneRect(-165,-165,3300,2250);
@@ -152,7 +157,6 @@ void MainWindow::initVisu()
     QPixmap tapis(":/Images/AgeOfBots/table.png");
     image = scene->addPixmap(tapis);
     image->setOffset(-165,-165);
-    ui->graphicsView->fitInView(scene->sceneRect(),Qt::KeepAspectRatio);
 
     QPixmap robot(":/Images/AgeOfBots/ROB2020.png");
 

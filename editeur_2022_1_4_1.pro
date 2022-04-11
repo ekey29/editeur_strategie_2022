@@ -25,6 +25,7 @@ HEADERS += \
     mainwindow.h \
     mycomboboxitemdelegate.h \
     mymodel.h \
+    myqgraphicsview.h \
     myqtableview.h
 
 FORMS += \
