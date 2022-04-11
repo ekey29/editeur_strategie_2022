@@ -24,7 +24,9 @@ SOURCES += \
 HEADERS += \
     mainwindow.h \
     mycomboboxitemdelegate.h \
-    mymodel.h
+    mymodel.h \
+    myqgraphicsview.h \
+    myqtableview.h
 
 FORMS += \
     mainwindow.ui
