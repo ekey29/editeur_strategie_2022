@@ -459,6 +459,8 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
 
 
+
+
     bool collide = true;
     if(check==false)
     {
@@ -1133,15 +1135,17 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
                 QRect kek(0,0,54,54);
 
+                scene->removeItem(ventouse[0]);
                 int brasChoisi = ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt();
                 ventouse[0] = scene->addEllipse(kek);
                 ventouse[0]->setPen(redline);
                 ventouse[0]->setTransformOriginPoint(ventouse[0]->boundingRect().center());
-                ventouse[0]->setPos(PosYrob + 92.5 + 54 , PosXrob);
+                ventouse[0]->setPos(PosYrob + 92.5 + 285*cos(PosRotrob*(M_PI/180)) + 54 , PosXrob - 285*cos(PosRotrob*(M_PI/180)));
                 ventouse[0]->setZValue(1);
 
                 if(ptrEchantillon[1]->boundingRect().contains(ventouse[0]->boundingRect().center())){
                     qDebug() << "LE PODEEEEEEEEEER__________________________________________________________________";
+
                 }
                 else qDebug() << "nopoder___________________________________________________________________________";
 
@@ -1157,11 +1161,11 @@ void MainWindow::updateVisu(const QModelIndex &index)
             {
                 int carreMesure = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
                 if (brasMesure[0]->collidesWithItem(ptrCarre[carreMesure])){
-                    qDebug() << "on est laaaaaa (0)";
+
                     ptrCarre[carreMesure]->hide();
                 }
                 else if (brasMesure[1]->collidesWithItem(ptrCarre[carreMesure])){
-                    qDebug() << "on est laaaaaa (1)";
+
                     ptrCarre[carreMesure]->hide();
                 }
             }
