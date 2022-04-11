@@ -70,6 +70,7 @@ void MyComboBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index
             cb->addItem(QString("RES_DEPL"));
             cb->addItem(QString("RES_MES"));
             cb->addItem(QString("RES_RANG"));
+            cb->addItem(QString("CHASSE_NEIGE"));
             cb->setCurrentText(model->data(index).toString());
         }
 //        else if(model->data(model->index(index.row(), 0),Qt::DisplayRole).toString().contains("Ligne Droite"))

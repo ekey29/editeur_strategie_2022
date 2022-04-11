@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include <QList>
 
 const QStringList MainWindow::dataCol1 = {"Debut Match",
                                           "Ligne Droite",
@@ -19,7 +19,8 @@ const QStringList MainWindow::dataAction = {"PRISE_SIMPLE",
                                             "PASSE",
                                             "RES_DEPL",
                                             "RES_MES",
-                                            "RES_RANG"};
+                                            "RES_RANG",
+                                            "CHASSE_NEIGE"};
 
 int carreFlag = 1;
 
@@ -142,7 +143,8 @@ void MainWindow::initVisu()
     ui->setupUi(this); //L'user Interface démarre
 
     // positions initiales des splitter en fixant les zones
-    QList<int> size(2);
+    QList<int> size;
+    size << 0 << 0;
     size[0] = 0.5 * width();
     size[1] = width() - size[0];
     ui->splitterHoriz->setSizes(size);
@@ -419,7 +421,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
     int newValue;
 
     QGraphicsLineItem *brasmes[3];
-    bool resDeploye[2];
+    bool resDeploye[2] {false,false};
 
     check = ui->checkBox->isChecked();
     setWindowTitle("éditeur de stratégie 2022 - Age of Bots - 1.5.1");
@@ -612,6 +614,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
         // remove toutes les lignes de déplacement
         for(int i=0;i<7;i++)
             scene->removeItem(item[i]);
+        scene->removeItem(ventouse[0]);
 
 
         switch(indexComboBox)
@@ -1118,7 +1121,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
                 QRect kek(0,0,54,54);
 
-                scene->removeItem(ventouse[0]);
+
                 int brasChoisi = ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt();
                 ventouse[0] = scene->addEllipse(kek);
                 ventouse[0]->setPen(redline);
@@ -1913,6 +1916,9 @@ void MainWindow::on_ExportFileButton_clicked()
                 break;
             case 5: //RES_RANG
                 textStream << "156";
+                break;
+            case 6 : //CHASSE_NEIGE
+                textStream << 157;
                 break;
 
             }
