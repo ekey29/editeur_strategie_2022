@@ -78,7 +78,7 @@ private:
 
     //QTableView *tableView;
 
-    //variable commune à chaque année
+    //attributs commune à chaque année
     QGraphicsScene *scene;
     QGraphicsPixmapItem *image;
     QGraphicsPixmapItem *robot1, *robotdep;
@@ -93,10 +93,11 @@ private:
     QGraphicsLineItem *lineRandom;
     QGraphicsEllipseItem *ellipseRandom;
 
-    //variables spécifiques à l'année 2022
+    //attributs spécifiques à l'année 2022
     QGraphicsPixmapItem *ptrEchantillon[30],*ptrCarre[10];
     QGraphicsRectItem *brasMesure[2];
     QGraphicsEllipseItem *ventouse[6];
+    QGraphicsLineItem *collisionLine[4];
 
 
 
@@ -111,6 +112,8 @@ public:
     int nbUpdateVisu = 0;
 
 public slots:
+
+    //methodes commune à chaque année
     void setHeaderComboBox(int index);                  //Modifie les headers en fonction de l'index de la ComboBox
     void initHeaderData();                              //Initialise les headers
     void initModel();                                   //Initialise le modèle
@@ -121,8 +124,11 @@ public slots:
     void updateVisu(const QModelIndex &index);          //Actualise les éléments visuels de la table de jeu
     void SetView();                                     //Actualise la vue (taille des images dans le "graphics view")
     void initVisu();                                    //Initialise la table de jeu et la position initiale du robot
-    QPixmap determinerCouleur(int i);
-    void afficherEchantillon(int i);
+
+    //methode spécifiques à l'année 2022
+    QPixmap determinerCouleur(int i);                   // détermine la pixmap à utiliser pour l'échantillon i du tableau coordonnées
+    void afficherEchantillon(int i);                    //affiche l'échantillon i du tableau de coordonnées
+    bool collisionVentouse(int i, int rotRob);                      // crée quatres lignes qui permettent de savoir si la ventouse est bien placée
 
 
 protected:

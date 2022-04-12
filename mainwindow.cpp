@@ -89,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent)
     ,brasMesure{new QGraphicsRectItem,new QGraphicsRectItem}
     ,ventouse{new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,
               new QGraphicsEllipseItem }
+    ,collisionLine{new QGraphicsLineItem,new QGraphicsLineItem,new QGraphicsLineItem,new QGraphicsLineItem}
 
 {
 
@@ -620,6 +621,8 @@ void MainWindow::updateVisu(const QModelIndex &index)
         // remove toutes les lignes de déplacement
         for(int i=0;i<7;i++)
             scene->removeItem(item[i]);
+        for(int i=0;i<4;i++)
+            scene->removeItem(collisionLine[i]);
         scene->removeItem(ventouse[0]);
 
 
@@ -1136,7 +1139,10 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 ventouse[0]->moveBy(212.5*sin(((PosRotrob) * M_PI)/180) , 212.5*cos(((PosRotrob) * M_PI)/180));
 
 
-                if(ptrEchantillon[1]->boundingRect().contains(ventouse[0]->boundingRect())){
+
+
+
+                if(collisionVentouse(0,PosRotrob)){
                     qDebug() << "LE PODEEEEEEEEEER__________________________________________________________________";
 
                 }
@@ -2287,3 +2293,49 @@ void MainWindow::afficherEchantillon(int i){
 }
 
 
+bool MainWindow::collisionVentouse(int i,int rotRob){
+    QLine ligneVentouse(0,0,10,0);
+    bool toReturn = false;
+
+    QPen pen;
+    pen.setColor(Qt::green);
+    pen.setWidth(5);
+
+    collisionLine[0] = scene->addLine(ligneVentouse);
+    collisionLine[0]->setPen(pen);
+    collisionLine[1] = scene->addLine(ligneVentouse);
+    collisionLine[1]->setPen(pen);
+    collisionLine[2] = scene->addLine(ligneVentouse);
+    collisionLine[2]->setPen(pen);
+    collisionLine[3] = scene->addLine(ligneVentouse);
+    collisionLine[3]->setPen(pen);
+
+
+    collisionLine[0]->setPos(robot1->pos().x() + GLOBALOFFSETX - 25,robot1->pos().y() + GLOBALOFFSETY + 15);
+    collisionLine[0]->moveBy(212.5*sin(((rotRob) * M_PI)/180) , 212.5*cos(((rotRob) * M_PI)/180));
+    collisionLine[0]->moveBy(27-5,0);
+    collisionLine[1]->setPos(robot1->pos().x() + GLOBALOFFSETX - 25,robot1->pos().y() + GLOBALOFFSETY + 15);
+    collisionLine[1]->moveBy(212.5*sin(((rotRob) * M_PI)/180) , 212.5*cos(((rotRob) * M_PI)/180));
+    collisionLine[1]->moveBy(27-5,54);
+    collisionLine[2]->setPos(robot1->pos().x() + GLOBALOFFSETX - 25,robot1->pos().y() + GLOBALOFFSETY + 15);
+    collisionLine[2]->moveBy(212.5*sin(((rotRob) * M_PI)/180) , 212.5*cos(((rotRob) * M_PI)/180));
+    collisionLine[2]->moveBy(0-5,27);
+    collisionLine[3]->setPos(robot1->pos().x() + GLOBALOFFSETX - 25,robot1->pos().y() + GLOBALOFFSETY + 15);
+    collisionLine[3]->moveBy(212.5*sin(((rotRob) * M_PI)/180) , 212.5*cos(((rotRob) * M_PI)/180));
+    collisionLine[3]->moveBy(54-5,27);
+
+    for(int j =0;j<30;j++){
+        if(collisionLine[0]->collidesWithItem(ptrEchantillon[j]) //ça fait peur , mais ça veut juste dire si les quatre lignes vertes touchent l'échantillon
+           && collisionLine[1]->collidesWithItem(ptrEchantillon[j]) //la fonction est imparfaite il faut faire attention a ne pas toucher deux échantillons
+           && collisionLine[2]->collidesWithItem(ptrEchantillon[j])
+           && collisionLine[3]->collidesWithItem(ptrEchantillon[j])){
+            toReturn  = true;
+        }
+
+
+
+    }
+
+    return toReturn;
+
+}
