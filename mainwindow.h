@@ -128,7 +128,7 @@ public slots:
     //methode spécifiques à l'année 2022
     QPixmap determinerCouleur(int i);                   // détermine la pixmap à utiliser pour l'échantillon i du tableau coordonnées
     void afficherEchantillon(int i);                    //affiche l'échantillon i du tableau de coordonnées
-    bool collisionVentouse(int i, int rotRob);                      // crée quatres lignes qui permettent de savoir si la ventouse est bien placée
+    int collisionVentouse(int i, int rotRob);          // crée quatres lignes qui permettent de savoir si la ventouse est bien placée
 
 
 protected:

@@ -2,6 +2,10 @@
 #include "ui_mainwindow.h"
 #include <QList>
 
+#define ROBOTCENTRE robot1->pos().x() + GLOBALOFFSETX - 25,robot1->pos().y() + GLOBALOFFSETY + 15
+#define ROBOTCENTREX robot1->pos().x() + GLOBALOFFSETX - 25
+#define ROBOTCENTREY robot1->pos().y() + GLOBALOFFSETY + 15
+
 const QStringList MainWindow::dataCol1 = {"Debut Match",
                                           "Ligne Droite",
                                           "Rotation",
@@ -24,51 +28,52 @@ const QStringList MainWindow::dataAction = {"PRISE_SIMPLE",
 
 int carreFlag = 1;
 
-int bras[6]{-1,-1,-1,-1,-1,-1}; //tableau qui stocke quel échantillon est attrapé par quel bras. -1 permet d'indiquer un bras sans échantillon
 
-int coordonnees[30][5]{ // coordonnées des échantillons {x,y,COULEUR,etat,rotation}
+
+int coordonnees[30][6]{ // coordonnées des échantillons {x,y,COULEUR,etat,rotation,bras}
     // face : 0-> caché ; 1-> retourné ; 2-> debout
     //0 ->11 échantillon au sol ; 12->17 site de fouilles ;18->29 distributeurs;
+    // le dernier paramètre correspon au bras qui a attrapé l'échantillon : 0 -> aucun ; 1 à 6 -> bras du bas ; 11 à 16 -> bras du haut
 
-    {900,555,BLUE,0,0}, // au sol côté jaune
-    {830,679,GREEN,0,0},
-    {900,805,RED,0,0},
+    {900,555,BLUE,0,0,0}, // au sol côté jaune
+    {830,679,GREEN,0,0,0},
+    {900,805,RED,0,0,0},
 
-    {-65,300,GREEN,0}, // en hauteur côté jaune
-    {121,1688,BLUE,0,-45},
-    {312,1879,RED,0,-45},
+    {-65,300,GREEN,0,0,0}, // en hauteur côté jaune
+    {121,1688,BLUE,0,-45,0},
+    {312,1879,RED,0,-45,0},
 
-    {2100,555,BLUE,0}, // au sol côté violet
-    {2170,679,GREEN,0},
-    {2100,805,RED,0},
+    {2100,555,BLUE,0,0,0}, // au sol côté violet
+    {2170,679,GREEN,0,0,0},
+    {2100,805,RED,0,0,0},
 
-    {3065,300,GREEN,0}, // en hauteur côté violet
-    {2879,1688,BLUE,0},
-    {2688,1879,RED,0},
+    {3065,300,GREEN,0,0,0}, // en hauteur côté violet
+    {2879,1688,BLUE,0,0,0},
+    {2688,1879,RED,0,0,0},
 
-    {0,0,GREEN,1},//site de fouille côté jaune
-    {0,0,RED,1},
-    {0,0,BLUE,1},
+    {0,0,GREEN,1,0,0},//site de fouille côté jaune
+    {0,0,RED,1,0,0},
+    {0,0,BLUE,1,0,0},
 
-    {0,0,GREEN,1},//site de fouille côté violet
-    {0,0,RED,1},
-    {0,0,BLUE,1},
+    {0,0,GREEN,1,0,0},//site de fouille côté violet
+    {0,0,RED,1,0,0},
+    {0,0,BLUE,1,0,0},
 
-    {22,1250,RED,2},//distributeurs bas côté jaune
-    {37,1250,GREEN,2},
-    {52,1250,BLUE,2},
+    {22,1250,RED,2,0,0},//distributeurs bas côté jaune
+    {37,1250,GREEN,2,0,0},
+    {52,1250,BLUE,2,0,0},
 
-    {1350,22,RED,2,90},//distributeurs haut côté jaune
-    {1350,37,GREEN,2,90},
-    {1350,52,BLUE,2,90},
+    {1350,22,RED,2,90,0},//distributeurs haut côté jaune
+    {1350,37,GREEN,2,90,0},
+    {1350,52,BLUE,2,90,0},
 
-    {3000-22,1250,RED,2},//distributeurs bas côté violet
-    {2985-22,1250,GREEN,2},
-    {2970-22,1250,BLUE,2},
+    {3000-22,1250,RED,2,0,0},//distributeurs bas côté violet
+    {2985-22,1250,GREEN,2,0,0},
+    {2970-22,1250,BLUE,2,0,0},
 
-    {1650,22,RED,2,90},//distributeurs haut côté violet
-    {1650,37,GREEN,2,90},
-    {1650,52,BLUE,2,90}
+    {1650,22,RED,2,90,0},//distributeurs haut côté violet
+    {1650,37,GREEN,2,90,0},
+    {1650,52,BLUE,2,90,0}
 };
 
 
@@ -425,8 +430,15 @@ void MainWindow::updateVisu(const QModelIndex &index)
             PosCXrob= 0, PosCYrob= 0, distanceLigneDroite, rayonCourbe, rayonCourbeVentouse, angleCourbe,angleRotation;
     int newValue;
 
-    QGraphicsLineItem *brasmes[3];
+
     bool resDeploye[2] {false,false};
+    double bras[6][2]{
+        {ROBOTCENTREX,ROBOTCENTREY + 135},
+        {ROBOTCENTREX,ROBOTCENTREY},
+        {ROBOTCENTREX,ROBOTCENTREY - 135},
+        {ROBOTCENTREX,ROBOTCENTREY + 135},
+        {ROBOTCENTREX,ROBOTCENTREY},
+        {ROBOTCENTREX,ROBOTCENTREY - 135}};
 
     check = ui->checkBox->isChecked();
     setWindowTitle("éditeur de stratégie 2022 - Age of Bots - 1.5.1");
@@ -618,12 +630,14 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 robotdep->setRotation(90-PosRotrob);
         }
         qDebug() << "Rotation robot = " << robot1->rotation();
-        // remove toutes les lignes de déplacement
+
+        // remove toutes les lignes de déplacement et les lignes des ventouses
         for(int i=0;i<7;i++)
             scene->removeItem(item[i]);
         for(int i=0;i<4;i++)
             scene->removeItem(collisionLine[i]);
-        scene->removeItem(ventouse[0]);
+        for(int i=0;i<6;i++)
+            scene->removeItem(ventouse[i]);
 
 
         switch(indexComboBox)
@@ -1128,22 +1142,29 @@ void MainWindow::updateVisu(const QModelIndex &index)
             if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="PRISE_SIMPLE")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
 
+                int brasChoisi = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
+
                 QRect kek(0,0,54,54);
+                int echantillonAttrape;
+
+                ventouse[brasChoisi] = scene->addEllipse(kek);
+                ventouse[brasChoisi]->setPen(redline);
+                ventouse[brasChoisi]->setTransformOriginPoint(ventouse[0]->boundingRect().center());
+                ventouse[brasChoisi]->setPos(bras[brasChoisi][0],bras[brasChoisi][1]);
+                if(brasChoisi <= 3)
+                    ventouse[brasChoisi]->moveBy(212.5*sin(((PosRotrob) * M_PI)/180) , 212.5*cos(((PosRotrob) * M_PI)/180));
+                else
+                    ventouse[brasChoisi]->moveBy(212.5*sin(((PosRotrob) * M_PI)/180 + M_PI) , 212.5*cos(((PosRotrob) * M_PI)/180) + M_PI);
 
 
-                int brasChoisi = ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt();
-                ventouse[0] = scene->addEllipse(kek);
-                ventouse[0]->setPen(redline);
-                ventouse[0]->setTransformOriginPoint(ventouse[0]->boundingRect().center());
-                ventouse[0]->setPos(robot1->pos().x() + GLOBALOFFSETX - 25,robot1->pos().y() + GLOBALOFFSETY + 15);
-                ventouse[0]->moveBy(212.5*sin(((PosRotrob) * M_PI)/180) , 212.5*cos(((PosRotrob) * M_PI)/180));
 
 
-
-
-
-                if(collisionVentouse(0,PosRotrob)){
+                echantillonAttrape = collisionVentouse(brasChoisi,PosRotrob);
+                if(echantillonAttrape != -1){
                     qDebug() << "LE PODEEEEEEEEEER__________________________________________________________________";
+
+                    coordonnees[echantillonAttrape][5] = brasChoisi;
+
 
                 }
                 else qDebug() << "nopoder___________________________________________________________________________";
@@ -2278,6 +2299,10 @@ void MainWindow::afficherEchantillon(int i){
     QString str = QString::number(i);
     paint.drawText(pix.rect().center(),str);
 
+    if (coordonnees[i][5] != 0){
+
+    }
+
     //on ajoute l'item aux bonnes coordonnées
     ptrEchantillon[i] = scene->addPixmap(pix);
     ptrEchantillon[i]->setPos(coordonnees[i][0],coordonnees[i][1]);
@@ -2293,9 +2318,9 @@ void MainWindow::afficherEchantillon(int i){
 }
 
 
-bool MainWindow::collisionVentouse(int i,int rotRob){
+int MainWindow::collisionVentouse(int i,int rotRob){
     QLine ligneVentouse(0,0,10,0);
-    bool toReturn = false;
+    int toReturn = -1; //la fonction retournera -1 si aucune collision n'est détecté, autrement , elle renvoie le numéro de l'échantillon attrapé.
 
     QPen pen;
     pen.setColor(Qt::green);
@@ -2326,10 +2351,10 @@ bool MainWindow::collisionVentouse(int i,int rotRob){
 
     for(int j =0;j<30;j++){
         if(collisionLine[0]->collidesWithItem(ptrEchantillon[j]) //ça fait peur , mais ça veut juste dire si les quatre lignes vertes touchent l'échantillon
-           && collisionLine[1]->collidesWithItem(ptrEchantillon[j]) //la fonction est imparfaite il faut faire attention a ne pas toucher deux échantillons
+           && collisionLine[1]->collidesWithItem(ptrEchantillon[j])
            && collisionLine[2]->collidesWithItem(ptrEchantillon[j])
            && collisionLine[3]->collidesWithItem(ptrEchantillon[j])){
-            toReturn  = true;
+            toReturn  = j;
         }
 
 
