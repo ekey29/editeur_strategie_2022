@@ -29,6 +29,7 @@ const QStringList MainWindow::dataAction = {"PRISE_SIMPLE",
 int carreFlag = 1;
 
 
+QPointF bras[6]{};
 
 int coordonnees[30][6]{ // coordonnées des échantillons {x,y,COULEUR,etat,rotation,bras}
     // face : 0-> caché ; 1-> retourné ; 2-> debout
@@ -432,13 +433,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
 
     bool resDeploye[2] {false,false};
-    double bras[6][2]{
-        {ROBOTCENTREX,ROBOTCENTREY + 135},
-        {ROBOTCENTREX,ROBOTCENTREY},
-        {ROBOTCENTREX,ROBOTCENTREY - 135},
-        {ROBOTCENTREX,ROBOTCENTREY + 135},
-        {ROBOTCENTREX,ROBOTCENTREY},
-        {ROBOTCENTREX,ROBOTCENTREY - 135}};
+
 
     check = ui->checkBox->isChecked();
     setWindowTitle("éditeur de stratégie 2022 - Age of Bots - 1.5.1");
@@ -1150,11 +1145,22 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 ventouse[brasChoisi] = scene->addEllipse(kek);
                 ventouse[brasChoisi]->setPen(redline);
                 ventouse[brasChoisi]->setTransformOriginPoint(ventouse[0]->boundingRect().center());
-                ventouse[brasChoisi]->setPos(bras[brasChoisi][0],bras[brasChoisi][1]);
-                if(brasChoisi <= 3)
-                    ventouse[brasChoisi]->moveBy(212.5*sin(((PosRotrob) * M_PI)/180) , 212.5*cos(((PosRotrob) * M_PI)/180));
-                else
-                    ventouse[brasChoisi]->moveBy(212.5*sin(((PosRotrob) * M_PI)/180 + M_PI) , 212.5*cos(((PosRotrob) * M_PI)/180) + M_PI);
+                ventouse[brasChoisi]->setPos(ROBOTCENTRE);
+
+                switch (brasChoisi){
+                    case 0 : ventouse[brasChoisi]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 - 47*M_PI/360) , (231.76)*cos(((PosRotrob) * M_PI)/180 - 47*M_PI/360));
+                            break;
+                    case 1 : ventouse[brasChoisi]->moveBy((212.5)*sin(((PosRotrob) * M_PI)/180) , (212.5)*cos(((PosRotrob) * M_PI)/180));
+                            break;
+                    case 2 : ventouse[brasChoisi]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360) , (231.76)*cos(((PosRotrob) * M_PI)/180 + 47*M_PI/360));
+                            break;
+                    case 3 : ventouse[brasChoisi]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360 + M_PI) , (231.76)*cos(((PosRotrob) * M_PI)/180 + 47*M_PI/360 + M_PI));
+                            break;
+                    case 4 : ventouse[brasChoisi]->moveBy((212.5)*sin(((PosRotrob) * M_PI)/180 + M_PI) , (212.5)*cos(((PosRotrob) * M_PI)/180 + M_PI));
+                            break;
+                    case 5 : ventouse[brasChoisi]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360 - M_PI) , (231.76)*cos(((PosRotrob) * M_PI)/180 - 47*M_PI/360 + M_PI));
+                            break;
+                }
 
 
 
@@ -1164,6 +1170,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
                     qDebug() << "LE PODEEEEEEEEEER__________________________________________________________________";
 
                     coordonnees[echantillonAttrape][5] = brasChoisi;
+                    bras[brasChoisi] = ventouse[brasChoisi]->pos();
 
 
                 }
@@ -2300,6 +2307,8 @@ void MainWindow::afficherEchantillon(int i){
     paint.drawText(pix.rect().center(),str);
 
     if (coordonnees[i][5] != 0){
+        coordonnees[i][0] = bras[coordonnees[i][5]].x();
+        coordonnees[i][1] = bras[coordonnees[i][5]].y();
 
     }
 
@@ -2321,11 +2330,14 @@ void MainWindow::afficherEchantillon(int i){
 int MainWindow::collisionVentouse(int i,int rotRob){
     QLine ligneVentouse(0,0,10,0);
     int toReturn = -1; //la fonction retournera -1 si aucune collision n'est détecté, autrement , elle renvoie le numéro de l'échantillon attrapé.
+    int position[2] = {0,0};
 
+    //on setup le pen qui va dessiner les lignes
     QPen pen;
     pen.setColor(Qt::green);
     pen.setWidth(5);
 
+    //on ajoute les lignes à la scène et on et leurs associe le pen
     collisionLine[0] = scene->addLine(ligneVentouse);
     collisionLine[0]->setPen(pen);
     collisionLine[1] = scene->addLine(ligneVentouse);
@@ -2335,18 +2347,40 @@ int MainWindow::collisionVentouse(int i,int rotRob){
     collisionLine[3] = scene->addLine(ligneVentouse);
     collisionLine[3]->setPen(pen);
 
+    //on détermine la position de la ventouse choisie par le paramètre i
 
-    collisionLine[0]->setPos(robot1->pos().x() + GLOBALOFFSETX - 25,robot1->pos().y() + GLOBALOFFSETY + 15);
-    collisionLine[0]->moveBy(212.5*sin(((rotRob) * M_PI)/180) , 212.5*cos(((rotRob) * M_PI)/180));
-    collisionLine[0]->moveBy(27-5,0);
-    collisionLine[1]->setPos(robot1->pos().x() + GLOBALOFFSETX - 25,robot1->pos().y() + GLOBALOFFSETY + 15);
-    collisionLine[1]->moveBy(212.5*sin(((rotRob) * M_PI)/180) , 212.5*cos(((rotRob) * M_PI)/180));
+    switch (i){
+        case 0 : position[0] = (231.76)*sin(((rotRob) * M_PI)/180 - 47*M_PI/360) ;
+                 position[1] =  (231.76)*cos(((rotRob) * M_PI)/180 - 47*M_PI/360);
+                break;
+        case 1 : position[0] = (212.5)*sin(((rotRob) * M_PI)/180) ;
+                 position[1] =  (212.5)*cos(((rotRob) * M_PI)/180);
+                break;
+        case 2 : position[0] = (231.76)*sin(((rotRob) * M_PI)/180 + 47*M_PI/360) ;
+                 position[1] =  (231.76)*cos(((rotRob) * M_PI)/180 + 47*M_PI/360);
+                break;
+        case 3 : position[0] = (231.76)*sin(((rotRob) * M_PI)/180 + 47*M_PI/360 + M_PI) ;
+                 position[1] =  (231.76)*cos(((rotRob) * M_PI)/180 + 47*M_PI/360 + M_PI);
+                break;
+        case 4 : position[0] = (212.5)*sin(((rotRob) * M_PI)/180 + M_PI) ;
+                 position[1] =  (212.5)*cos(((rotRob) * M_PI)/180 + M_PI);
+                break;
+        case 5 : position[0] = (231.76)*sin(((rotRob) * M_PI)/180 + 47*M_PI/360 - M_PI) ;
+                 position[1] =  (231.76)*cos(((rotRob) * M_PI)/180 - 47*M_PI/360 + M_PI);
+                break;
+    }
+
+    collisionLine[0]->setPos(ROBOTCENTRE);
+    collisionLine[0]->moveBy(position[0],position[1]);
+    collisionLine[0]->moveBy(27-5,0); // on soustrait la position par 5 pixels pour centrer la ligne qui est de 10 pixels
+    collisionLine[1]->setPos(ROBOTCENTRE);
+    collisionLine[1]->moveBy(position[0],position[1]);
     collisionLine[1]->moveBy(27-5,54);
-    collisionLine[2]->setPos(robot1->pos().x() + GLOBALOFFSETX - 25,robot1->pos().y() + GLOBALOFFSETY + 15);
-    collisionLine[2]->moveBy(212.5*sin(((rotRob) * M_PI)/180) , 212.5*cos(((rotRob) * M_PI)/180));
+    collisionLine[2]->setPos(ROBOTCENTRE);
+    collisionLine[2]->moveBy(position[0],position[1]);
     collisionLine[2]->moveBy(0-5,27);
-    collisionLine[3]->setPos(robot1->pos().x() + GLOBALOFFSETX - 25,robot1->pos().y() + GLOBALOFFSETY + 15);
-    collisionLine[3]->moveBy(212.5*sin(((rotRob) * M_PI)/180) , 212.5*cos(((rotRob) * M_PI)/180));
+    collisionLine[3]->setPos(ROBOTCENTRE);
+    collisionLine[3]->moveBy(position[0],position[1]);
     collisionLine[3]->moveBy(54-5,27);
 
     for(int j =0;j<30;j++){
