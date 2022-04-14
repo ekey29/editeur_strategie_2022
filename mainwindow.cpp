@@ -20,11 +20,13 @@ const QStringList MainWindow::dataEquipe = {"Jaune",
 
 const QStringList MainWindow::dataAction = {"PRISE_SIMPLE",
                                             "PRISE_COMPLETE",
-                                            "PASSE",
+                                            "RELACHER",
                                             "RES_DEPL",
                                             "RES_MES",
                                             "RES_RANG",
-                                            "CHASSE_NEIGE"};
+                                            "CHASSE_NEIGE",
+                                            "POMPE_START",
+                                            "POMPTE_STOP"};
 
 int carreFlag = 1;
 
@@ -631,8 +633,9 @@ void MainWindow::updateVisu(const QModelIndex &index)
             scene->removeItem(item[i]);
         for(int i=0;i<4;i++)
             scene->removeItem(collisionLine[i]);
-        for(int i=0;i<6;i++)
+        for(int i=0;i<6;i++){
             scene->removeItem(ventouse[i]);
+        }
 
 
         switch(indexComboBox)
@@ -1144,26 +1147,6 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
                 ventouse[brasChoisi] = scene->addEllipse(kek);
                 ventouse[brasChoisi]->setPen(redline);
-                ventouse[brasChoisi]->setTransformOriginPoint(ventouse[0]->boundingRect().center());
-                ventouse[brasChoisi]->setPos(ROBOTCENTRE);
-
-                switch (brasChoisi){
-                    case 0 : ventouse[brasChoisi]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 - 47*M_PI/360) , (231.76)*cos(((PosRotrob) * M_PI)/180 - 47*M_PI/360));
-                            break;
-                    case 1 : ventouse[brasChoisi]->moveBy((212.5)*sin(((PosRotrob) * M_PI)/180) , (212.5)*cos(((PosRotrob) * M_PI)/180));
-                            break;
-                    case 2 : ventouse[brasChoisi]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360) , (231.76)*cos(((PosRotrob) * M_PI)/180 + 47*M_PI/360));
-                            break;
-                    case 3 : ventouse[brasChoisi]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360 + M_PI) , (231.76)*cos(((PosRotrob) * M_PI)/180 + 47*M_PI/360 + M_PI));
-                            break;
-                    case 4 : ventouse[brasChoisi]->moveBy((212.5)*sin(((PosRotrob) * M_PI)/180 + M_PI) , (212.5)*cos(((PosRotrob) * M_PI)/180 + M_PI));
-                            break;
-                    case 5 : ventouse[brasChoisi]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360 - M_PI) , (231.76)*cos(((PosRotrob) * M_PI)/180 - 47*M_PI/360 + M_PI));
-                            break;
-                }
-
-
-
 
                 echantillonAttrape = collisionVentouse(brasChoisi,PosRotrob);
                 if(echantillonAttrape != -1){
@@ -1175,6 +1158,17 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
                 }
                 else qDebug() << "nopoder___________________________________________________________________________";
+
+            }
+
+            if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="RELACHER")
+                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
+
+                int BrasChoisi = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
+
+                for(int i = 0;i < 30; i++){
+                    if (coordonnees[i][5] == BrasChoisi) coordonnees[i][5] = 0;
+                }
 
             }
 
@@ -1621,6 +1615,27 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
             }
 
+            ventouse[i]->setTransformOriginPoint(ventouse[0]->boundingRect().center());
+            ventouse[i]->setPos(ROBOTCENTRE);
+
+            switch (i){
+                case 0 : ventouse[i]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 - 47*M_PI/360) , (231.76)*cos(((PosRotrob) * M_PI)/180 - 47*M_PI/360));
+                        break;
+                case 1 : ventouse[i]->moveBy((212.5)*sin(((PosRotrob) * M_PI)/180) , (212.5)*cos(((PosRotrob) * M_PI)/180));
+                        break;
+                case 2 : ventouse[i]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360) , (231.76)*cos(((PosRotrob) * M_PI)/180 + 47*M_PI/360));
+                        break;
+                case 3 : ventouse[i]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360 + M_PI) , (231.76)*cos(((PosRotrob) * M_PI)/180 + 47*M_PI/360 + M_PI));
+                        break;
+                case 4 : ventouse[i]->moveBy((212.5)*sin(((PosRotrob) * M_PI)/180 + M_PI) , (212.5)*cos(((PosRotrob) * M_PI)/180 + M_PI));
+                        break;
+                case 5 : ventouse[i]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360 - M_PI) , (231.76)*cos(((PosRotrob) * M_PI)/180 - 47*M_PI/360 + M_PI));
+                        break;
+            }
+            bras[i] = ventouse[i]->pos();
+
+
+
             if(resDeploye[0]){
                 scene->removeItem(brasMesure[0]); // on supprime le bras
 
@@ -1946,7 +1961,7 @@ void MainWindow::on_ExportFileButton_clicked()
             case 1: //PRISE_COMPLETE
                 textStream << "152";
                 break;
-            case 2: //PASSE
+            case 2: //RELACHER
                 textStream << "153";
                 break;
             case 3: //RES_DEPL
@@ -1959,7 +1974,13 @@ void MainWindow::on_ExportFileButton_clicked()
                 textStream << "156";
                 break;
             case 6 : //CHASSE_NEIGE
-                textStream << 157;
+                textStream << "157";
+                break;
+            case 7 : //POMPE_START
+                textStream << "158";
+                break;
+            case 8 : //POMPE_STOP
+                textStream << "159";
                 break;
 
             }
@@ -2318,9 +2339,13 @@ void MainWindow::afficherEchantillon(int i){
 
     //on effectue les différentes transformations nécéssaires
 
+    if (coordonnees[i][5] == 0){
     ptrEchantillon[i]->setOffset(-ptrEchantillon[i]->boundingRect().center().x() + GLOBALOFFSETX,
                                  -ptrEchantillon[i]->boundingRect().center().y() + GLOBALOFFSETY);
-
+    }
+    else ptrEchantillon[i]->setOffset(-ptrEchantillon[i]->boundingRect().center().x() +35,-ptrEchantillon[i]->boundingRect().center().y() + 30);
+    //quand l'échantillon est pris par un bras , pas besoin du global offset puisque sa position est la même que les ventouse qui ont le global offset
+    //il faut toujours l'offset qui permet de les centrer cependant
 
     ptrEchantillon[i]->setTransformOriginPoint(ptrEchantillon[i]->boundingRect().center());//cela met le point de rotation au centre au lieu d'en haut à droite
     ptrEchantillon[i]->setRotation(coordonnees[i][4]);

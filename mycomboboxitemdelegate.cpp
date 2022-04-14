@@ -66,11 +66,13 @@ void MyComboBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 
             cb->addItem(QString("PRISE_SIMPLE"));
             cb->addItem(QString("PRISE_COMPLETE"));
-            cb->addItem(QString("PASSE"));
+            cb->addItem(QString("RELACHER"));
             cb->addItem(QString("RES_DEPL"));
             cb->addItem(QString("RES_MES"));
             cb->addItem(QString("RES_RANG"));
             cb->addItem(QString("CHASSE_NEIGE"));
+            cb->addItem(QString("POMPE_START"));
+            cb->addItem(QString("POMPE_STOP"));
             cb->setCurrentText(model->data(index).toString());
         }
 //        else if(model->data(model->index(index.row(), 0),Qt::DisplayRole).toString().contains("Ligne Droite"))
