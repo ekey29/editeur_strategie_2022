@@ -79,7 +79,47 @@ int coordonneesBase[30][6]{ // coordonnées des échantillons {x,y,COULEUR,etat,
     {1650,52,BLUE,2,90,0}
 };
 
-int coordonnees[30][6];
+int coordonnees[30][6]{
+{900,555,BLUE,0,0,0}, // au sol côté jaune
+{830,679,GREEN,0,0,0},
+{900,805,RED,0,0,0},
+
+{-65,300,GREEN,0,0,0}, // en hauteur côté jaune
+{121,1688,BLUE,0,-45,0},
+{312,1879,RED,0,-45,0},
+
+{2100,555,BLUE,0,0,0}, // au sol côté violet
+{2170,679,GREEN,0,0,0},
+{2100,805,RED,0,0,0},
+
+{3065,300,GREEN,0,0,0}, // en hauteur côté violet
+{2879,1688,BLUE,0,0,0},
+{2688,1879,RED,0,0,0},
+
+{0,0,GREEN,1,0,0},//site de fouille côté jaune
+{0,0,RED,1,0,0},
+{0,0,BLUE,1,0,0},
+
+{0,0,GREEN,1,0,0},//site de fouille côté violet
+{0,0,RED,1,0,0},
+{0,0,BLUE,1,0,0},
+
+{22,1250,RED,2,0,0},//distributeurs bas côté jaune
+{37,1250,GREEN,2,0,0},
+{52,1250,BLUE,2,0,0},
+
+{1350,22,RED,2,90,0},//distributeurs haut côté jaune
+{1350,37,GREEN,2,90,0},
+{1350,52,BLUE,2,90,0},
+
+{3000-22,1250,RED,2,0,0},//distributeurs bas côté violet
+{2985-22,1250,GREEN,2,0,0},
+{2970-22,1250,BLUE,2,0,0},
+
+{1650,22,RED,2,90,0},//distributeurs haut côté violet
+{1650,37,GREEN,2,90,0},
+{1650,52,BLUE,2,90,0}
+};
 
 
 
@@ -446,14 +486,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
 
 
-    for(int i = 0; i < 12; ++i){
-        afficherEchantillon(i);
 
-    }
-    for(int i = 18 ; i < 30; ++i){
-        afficherEchantillon(i);
-
-    }
 
 
 
@@ -1143,24 +1176,39 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
 
                 int brasChoisi = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
+                int tabBrasChoisi[3];
 
+                //on determine la centaine, la dizaine et l'unité
+
+                tabBrasChoisi[0] = brasChoisi/100;
+                tabBrasChoisi[1] = (brasChoisi - 100*tabBrasChoisi[0])/10; // on enleve la centaine pour trouver la dizaine
+                tabBrasChoisi[2] = (brasChoisi - 100*tabBrasChoisi[0]) - 10*tabBrasChoisi[1]; // on enleve la centaine et la dizaine pour trouver l'unité
+
+                // on creer le rectangle qui va contenir le rond qui correspond à la ventouse
                 QRect kek(0,0,54,54);
                 int echantillonAttrape;
 
-                ventouse[brasChoisi] = scene->addEllipse(kek);
-                ventouse[brasChoisi]->setPen(redline);
 
-                echantillonAttrape = collisionVentouse(brasChoisi,PosRotrob);
-                if(echantillonAttrape != -1){
-                    qDebug() << "LE PODEEEEEEEEEER__________________________________________________________________";
 
-                    coordonnees[echantillonAttrape][5] = brasChoisi + 1;
-                    bras[brasChoisi + 1] = ventouse[brasChoisi + 1]->pos();
+                //on verifie les collisions avec la ventouse qui correspond au bras selectionner par la centaine , la dizaine et l'unité
+                // ex : 210 va activer les bras 1 ,2 et 0
+                for(int i = 0; i<3;i++){
+                   if(tabBrasChoisi[i] != 0 || i == 2 ){
+                       ventouse[tabBrasChoisi[i]] = scene->addEllipse(kek);
+                       ventouse[tabBrasChoisi[i]]->setPen(redline);
+                       echantillonAttrape = collisionVentouse(tabBrasChoisi[i],PosRotrob);
+                       if(echantillonAttrape != -1){
+                           qDebug() << "LE PODEEEEEEEEEER__________________________________________________________________";
+
+                           coordonnees[echantillonAttrape][5] = tabBrasChoisi[i] + 1;
+                           bras[tabBrasChoisi[i] + 1] = ventouse[tabBrasChoisi[i] + 1]->pos();
+
+
+                       }
+                   }
 
 
                 }
-                else qDebug() << "nopoder___________________________________________________________________________";
-
             }
 
             if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="RELACHER")
@@ -1752,6 +1800,14 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
 
         table_ligne=futur_i;
+    }
+    for(int i = 0; i < 12; ++i){
+        afficherEchantillon(i);
+
+    }
+    for(int i = 18 ; i < 30; ++i){
+        afficherEchantillon(i);
+
     }
     ui->lcdPosX->display(PosXrob);
     ui->lcdPosY->display(PosYrob);
@@ -2421,7 +2477,9 @@ int MainWindow::collisionVentouse(int i,int rotRob){
 
 
     }
-
+    //on cache les lignes de collision pour éviter les bug graphique (et parceque c'est moche) n'hesitez pas a commenter cette boucle pour mieux comprendre le système
+    for(int i=0;i<4;i++)
+        collisionLine[i]->hide();
     return toReturn;
 
 }

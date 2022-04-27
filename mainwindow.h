@@ -96,7 +96,7 @@ private:
     //attributs spécifiques à l'année 2022
     QGraphicsPixmapItem *ptrEchantillon[30],*ptrCarre[10];
     QGraphicsRectItem *brasMesure[2];
-    QGraphicsEllipseItem *ventouse[6];
+    QGraphicsEllipseItem *ventouse[7];
     QGraphicsLineItem *collisionLine[4];
     QPointF switchPosVentouse(int i , int PosRotrob);
 
