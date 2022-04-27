@@ -130,6 +130,7 @@ public slots:
     QPixmap determinerCouleur(int i);                   // détermine la pixmap à utiliser pour l'échantillon i du tableau coordonnées
     void afficherEchantillon(int i);                    //affiche l'échantillon i du tableau de coordonnées
     int collisionVentouse(int i, int rotRob);          // crée quatres lignes qui permettent de savoir si la ventouse est bien placée
+    void resetPosEchantillon();                         // remet à zéro les positions des échantillons en reprenant les valeurs de base du tableau coordonnées
 
 
 protected:

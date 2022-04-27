@@ -31,9 +31,9 @@ const QStringList MainWindow::dataAction = {"PRISE_SIMPLE",
 int carreFlag = 1;
 
 
-QPointF bras[6]{};
+QPointF bras[7]{};
 
-int coordonnees[30][6]{ // coordonnées des échantillons {x,y,COULEUR,etat,rotation,bras}
+int coordonneesBase[30][6]{ // coordonnées des échantillons {x,y,COULEUR,etat,rotation,bras}
     // face : 0-> caché ; 1-> retourné ; 2-> debout
     //0 ->11 échantillon au sol ; 12->17 site de fouilles ;18->29 distributeurs;
     // le dernier paramètre correspon au bras qui a attrapé l'échantillon : 0 -> aucun ; 1 à 6 -> bras du bas ; 11 à 16 -> bras du haut
@@ -79,6 +79,7 @@ int coordonnees[30][6]{ // coordonnées des échantillons {x,y,COULEUR,etat,rota
     {1650,52,BLUE,2,90,0}
 };
 
+int coordonnees[30][6];
 
 
 
@@ -169,7 +170,7 @@ void MainWindow::initVisu()
     image = scene->addPixmap(tapis);
     image->setOffset(-165,-165);
 
-    QPixmap robot(":/Images/AgeOfBots/ROB2020_save.png");
+    QPixmap robot(":/Images/AgeOfBots/ROB2020.png");
 
     robot1 = scene->addPixmap(robot);
     robot1->setOffset(-robot1->boundingRect().center().x() + GLOBALOFFSETX,
@@ -569,8 +570,8 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
                 }
 
-                collide = ptrEchantillon[12]->collidesWithItem(ptrEchantillon[13]) |
-                          ptrEchantillon[12]->collidesWithItem(ptrEchantillon[14]) |
+                collide = ptrEchantillon[12]->collidesWithItem(ptrEchantillon[13]) ||
+                          ptrEchantillon[12]->collidesWithItem(ptrEchantillon[14]) ||
                           ptrEchantillon[13]->collidesWithItem(ptrEchantillon[14]);
 
        }
@@ -585,8 +586,8 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
                 }
 
-                collide = ptrEchantillon[15]->collidesWithItem(ptrEchantillon[16]) |
-                          ptrEchantillon[15]->collidesWithItem(ptrEchantillon[17]) |
+                collide = ptrEchantillon[15]->collidesWithItem(ptrEchantillon[16]) ||
+                          ptrEchantillon[15]->collidesWithItem(ptrEchantillon[17]) ||
                           ptrEchantillon[17]->collidesWithItem(ptrEchantillon[16]);
 
        }
@@ -599,6 +600,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
     qDebug() << nbUpdateVisu << "______________________________________________________________________________________________________";
 
     int cpt_boucle=0;
+    resetPosEchantillon();
     while((table_ligne<index.row()+1)&&(cpt_boucle<(2*(ui->tableView->model()->rowCount())))) // on suit les numero de lignes et on bloque la boucle infini à 2 occurences
     {
         cpt_boucle++;
@@ -1152,8 +1154,8 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 if(echantillonAttrape != -1){
                     qDebug() << "LE PODEEEEEEEEEER__________________________________________________________________";
 
-                    coordonnees[echantillonAttrape][5] = brasChoisi;
-                    bras[brasChoisi] = ventouse[brasChoisi]->pos();
+                    coordonnees[echantillonAttrape][5] = brasChoisi + 1;
+                    bras[brasChoisi + 1] = ventouse[brasChoisi + 1]->pos();
 
 
                 }
@@ -1619,20 +1621,20 @@ void MainWindow::updateVisu(const QModelIndex &index)
             ventouse[i]->setPos(ROBOTCENTRE);
 
             switch (i){
-                case 0 : ventouse[i]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 - 47*M_PI/360) , (231.76)*cos(((PosRotrob) * M_PI)/180 - 47*M_PI/360));
+                case 0 : ventouse[i]->moveBy((226.06)*sin(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180) , (226.06)*cos(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180));
                         break;
-                case 1 : ventouse[i]->moveBy((212.5)*sin(((PosRotrob) * M_PI)/180) , (212.5)*cos(((PosRotrob) * M_PI)/180));
+                case 1 : ventouse[i]->moveBy((137.5)*sin(((PosRotrob) * M_PI)/180) , (137.5)*cos(((PosRotrob) * M_PI)/180));
                         break;
-                case 2 : ventouse[i]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360) , (231.76)*cos(((PosRotrob) * M_PI)/180 + 47*M_PI/360));
+                case 2 : ventouse[i]->moveBy((226.06)*sin(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180) , (226.06)*cos(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180));
                         break;
-                case 3 : ventouse[i]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360 + M_PI) , (231.76)*cos(((PosRotrob) * M_PI)/180 + 47*M_PI/360 + M_PI));
+                case 3 : ventouse[i]->moveBy((226.06)*sin(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180 + M_PI) , (226.06)*cos(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180 + M_PI));
                         break;
-                case 4 : ventouse[i]->moveBy((212.5)*sin(((PosRotrob) * M_PI)/180 + M_PI) , (212.5)*cos(((PosRotrob) * M_PI)/180 + M_PI));
+                case 4 : ventouse[i]->moveBy((137.5)*sin(((PosRotrob) * M_PI)/180 + M_PI) , (137.5)*cos(((PosRotrob) * M_PI)/180 + M_PI));
                         break;
-                case 5 : ventouse[i]->moveBy((231.76)*sin(((PosRotrob) * M_PI)/180 + 47*M_PI/360 - M_PI) , (231.76)*cos(((PosRotrob) * M_PI)/180 - 47*M_PI/360 + M_PI));
+                case 5 : ventouse[i]->moveBy((226.06)*sin(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180 - M_PI) , (226.06)*cos(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180 + M_PI));
                         break;
             }
-            bras[i] = ventouse[i]->pos();
+            bras[i + 1] = ventouse[i]->pos();
 
 
 
@@ -2375,23 +2377,23 @@ int MainWindow::collisionVentouse(int i,int rotRob){
     //on détermine la position de la ventouse choisie par le paramètre i
 
     switch (i){
-        case 0 : position[0] = (231.76)*sin(((rotRob) * M_PI)/180 - 47*M_PI/360) ;
-                 position[1] =  (231.76)*cos(((rotRob) * M_PI)/180 - 47*M_PI/360);
+        case 0 : position[0] = (226.06)*sin(((rotRob) * M_PI)/180 - 28.6*M_PI/180) ;
+                 position[1] =  (226.06)*cos(((rotRob) * M_PI)/180 - 28.6*M_PI/180);
                 break;
-        case 1 : position[0] = (212.5)*sin(((rotRob) * M_PI)/180) ;
-                 position[1] =  (212.5)*cos(((rotRob) * M_PI)/180);
+        case 1 : position[0] = (137.5)*sin(((rotRob) * M_PI)/180) ;
+                 position[1] =  (137.5)*cos(((rotRob) * M_PI)/180);
                 break;
-        case 2 : position[0] = (231.76)*sin(((rotRob) * M_PI)/180 + 47*M_PI/360) ;
-                 position[1] =  (231.76)*cos(((rotRob) * M_PI)/180 + 47*M_PI/360);
+        case 2 : position[0] = (226.06)*sin(((rotRob) * M_PI)/180 + 28.6*M_PI/180) ;
+                 position[1] =  (226.06)*cos(((rotRob) * M_PI)/180 + 28.6*M_PI/180);
                 break;
-        case 3 : position[0] = (231.76)*sin(((rotRob) * M_PI)/180 + 47*M_PI/360 + M_PI) ;
-                 position[1] =  (231.76)*cos(((rotRob) * M_PI)/180 + 47*M_PI/360 + M_PI);
+        case 3 : position[0] = (226.06)*sin(((rotRob) * M_PI)/180 + 28.6*M_PI/180 + M_PI) ;
+                 position[1] =  (226.06)*cos(((rotRob) * M_PI)/180 + 28.6*M_PI/180 + M_PI);
                 break;
-        case 4 : position[0] = (212.5)*sin(((rotRob) * M_PI)/180 + M_PI) ;
-                 position[1] =  (212.5)*cos(((rotRob) * M_PI)/180 + M_PI);
+        case 4 : position[0] = (137.5)*sin(((rotRob) * M_PI)/180 + M_PI) ;
+                 position[1] =  (137.5)*cos(((rotRob) * M_PI)/180 + M_PI);
                 break;
-        case 5 : position[0] = (231.76)*sin(((rotRob) * M_PI)/180 + 47*M_PI/360 - M_PI) ;
-                 position[1] =  (231.76)*cos(((rotRob) * M_PI)/180 - 47*M_PI/360 + M_PI);
+        case 5 : position[0] = (226.06)*sin(((rotRob) * M_PI)/180 + 28.6*M_PI/180 - M_PI) ;
+                 position[1] =  (226.06)*cos(((rotRob) * M_PI)/180 - 28.6*M_PI/180 + M_PI);
                 break;
     }
 
@@ -2422,4 +2424,12 @@ int MainWindow::collisionVentouse(int i,int rotRob){
 
     return toReturn;
 
+}
+
+void MainWindow::resetPosEchantillon(void){
+    for(int i = 0; i<30 ; i++){
+        for(int j = 0; j< 6 ; j++){
+            coordonnees[i][j] = coordonneesBase[i][j];
+        }
+    }
 }
