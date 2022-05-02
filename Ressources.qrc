@@ -7,12 +7,15 @@
         <file>Images/AgeOfBots/carre_jaune.png</file>
         <file>Images/AgeOfBots/carre_violet.png</file>
         <file>Images/AgeOfBots/gallerie.png</file>
-        <file>Images/AgeOfBots/ROB2020.png</file>
-        <file>Images/AgeOfBots/ROB2020_save.png</file>
         <file>Images/AgeOfBots/rouge.png</file>
         <file>Images/AgeOfBots/table.png</file>
         <file>Images/AgeOfBots/vert.png</file>
         <file>Images/AgeOfBots/vide.png</file>
         <file>Images/AgeOfBots/debout.png</file>
+        <file>Images/AgeOfBots/ROB2020.png</file>
+        <file>Images/AgeOfBots/ROB2020_save.png</file>
+        <file>Images/AgeOfBots/deboutB.png</file>
+        <file>Images/AgeOfBots/deboutR.png</file>
+        <file>Images/AgeOfBots/deboutV.png</file>
     </qresource>
 </RCC>

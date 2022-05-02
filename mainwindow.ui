@@ -36,7 +36,7 @@
        <property name="font">
         <font>
          <family>Liberation Sans</family>
-         <pointsize>12</pointsize>
+         <pointsize>10</pointsize>
          <stylestrategy>PreferAntialias</stylestrategy>
         </font>
        </property>
@@ -268,7 +268,6 @@
               <font>
                <family>Source Code Pro</family>
                <pointsize>20</pointsize>
-               <weight>50</weight>
                <italic>false</italic>
                <bold>false</bold>
                <stylestrategy>PreferAntialias</stylestrategy>
@@ -291,7 +290,6 @@ font: rgb(0, 0, 0);</string>
               <font>
                <family>Source Code Pro</family>
                <pointsize>20</pointsize>
-               <weight>50</weight>
                <italic>false</italic>
                <bold>false</bold>
                <stylestrategy>PreferAntialias</stylestrategy>
@@ -314,7 +312,6 @@ font: rgb(0, 0, 0);</string>
               <font>
                <family>Source Code Pro</family>
                <pointsize>20</pointsize>
-               <weight>50</weight>
                <italic>false</italic>
                <bold>false</bold>
                <stylestrategy>PreferAntialias</stylestrategy>
@@ -337,7 +334,6 @@ font: rgb(0, 0, 0);</string>
               <font>
                <family>Source Code Pro</family>
                <pointsize>20</pointsize>
-               <weight>50</weight>
                <italic>false</italic>
                <bold>false</bold>
                <stylestrategy>PreferAntialias</stylestrategy>
@@ -360,7 +356,6 @@ font: rgb(0, 0, 0);</string>
               <font>
                <family>Source Code Pro</family>
                <pointsize>20</pointsize>
-               <weight>50</weight>
                <italic>false</italic>
                <bold>false</bold>
                <stylestrategy>PreferAntialias</stylestrategy>
@@ -383,7 +378,6 @@ font: rgb(0, 0, 0);</string>
               <font>
                <family>Source Code Pro</family>
                <pointsize>20</pointsize>
-               <weight>50</weight>
                <italic>false</italic>
                <bold>false</bold>
                <stylestrategy>PreferAntialias</stylestrategy>
@@ -453,7 +447,6 @@ font: rgb(0, 0, 0);</string>
               <font>
                <family>Liberation Sans</family>
                <pointsize>12</pointsize>
-               <weight>50</weight>
                <italic>false</italic>
                <bold>false</bold>
                <stylestrategy>PreferAntialias</stylestrategy>
@@ -479,7 +472,6 @@ font: rgb(0, 0, 0);</string>
               <font>
                <family>Liberation Sans</family>
                <pointsize>12</pointsize>
-               <weight>50</weight>
                <italic>false</italic>
                <bold>false</bold>
                <stylestrategy>PreferAntialias</stylestrategy>

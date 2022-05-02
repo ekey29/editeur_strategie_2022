@@ -63,16 +63,23 @@ void MyComboBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 
         else if(model->data(model->index(index.row(), 1),Qt::DisplayRole).toString().contains("Action"))
         {
+            //chasse neige
+            cb->addItem(QString("DEPLOIEMENT"));
 
-            cb->addItem(QString("PRISE_SIMPLE"));
-            cb->addItem(QString("PRISE_COMPLETE"));
-            cb->addItem(QString("RELACHER"));
-            cb->addItem(QString("RES_DEPL"));
+            //action liées aux bras
+            cb->addItem(QString("PRISE_BAS"));
+            cb->addItem(QString("PASSE"));
+            cb->addItem(QString("RELACHER_BAS"));
+            cb->addItem(QString("POSE_HAUT"));
+            cb->addItem(QString("PRISE_BORDURE"));
+            cb->addItem(QString("POSE_BORDURE"));
+            cb->addItem(QString("PRISE_DISTRIB"));
+
+            //actions liées aux bras de mesures
+            cb->addItem(QString("RES_PRETEST"));
             cb->addItem(QString("RES_MES"));
             cb->addItem(QString("RES_RANG"));
-            cb->addItem(QString("CHASSE_NEIGE"));
-            cb->addItem(QString("POMPE_START"));
-            cb->addItem(QString("POMPE_STOP"));
+
             cb->setCurrentText(model->data(index).toString());
         }
 //        else if(model->data(model->index(index.row(), 0),Qt::DisplayRole).toString().contains("Ligne Droite"))

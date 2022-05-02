@@ -27,7 +27,7 @@ protected:
         setColumnWidth(0,w);
         w = 70*ratio;
         total += w;
-        setColumnWidth(2,w);
+        setColumnWidth(1,w);
         total += w;
         setColumnWidth(3,w);
         total += w;
@@ -50,12 +50,12 @@ protected:
         total += w;
         setColumnWidth(11,w);
 
-        // la colonne 1 occupe l'espace restant (à cause des arrondis)
+        // la colonne 2 occupe l'espace restant (à cause des arrondis)
         w = event->size().width()-total;
         if (w<70) w = 70;
-        setColumnWidth(1,w);
+        setColumnWidth(2,w);
         // la ligne ci-dessous fait la même chose mais l'utilisateur ne peut plus faire son réglage de largeur des colonnes
-//        horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+//        horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     }
 };
 

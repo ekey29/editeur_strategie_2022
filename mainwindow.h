@@ -124,7 +124,10 @@ public slots:
     void updateHeader(const QModelIndex &index);        //Actualise les Headers
     void updateVisu(const QModelIndex &index);          //Actualise les éléments visuels de la table de jeu
     void SetView();                                     //Actualise la vue (taille des images dans le "graphics view")
-    void initVisu();                                    //Initialise la table de jeu et la position initiale du robot
+    void initVisu();
+    int getAction(int chiffre);                         //Permet de déterminer de déterminer l'action qui correspond à chiffre. utilisé lors de l'importation de stratégie.
+
+    //Initialise la table de jeu et la position initiale du robot
 
     //methode spécifiques à l'année 2022
     QPixmap determinerCouleur(int i);                   // détermine la pixmap à utiliser pour l'échantillon i du tableau coordonnées
