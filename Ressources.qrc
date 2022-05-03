@@ -17,5 +17,8 @@
         <file>Images/AgeOfBots/deboutB.png</file>
         <file>Images/AgeOfBots/deboutR.png</file>
         <file>Images/AgeOfBots/deboutV.png</file>
+        <file>Images/AgeOfBots/videV.png</file>
+        <file>Images/AgeOfBots/videR.png</file>
+        <file>Images/AgeOfBots/videB.png</file>
     </qresource>
 </RCC>

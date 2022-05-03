@@ -18,24 +18,24 @@ const QStringList MainWindow::dataEquipe = {"Jaune",
                                             "Bleu"};
 
 
-const QStringList MainWindow::dataAction = {"DEPLOIEMENT",
+const QStringList MainWindow::dataAction = {"Deploiement",
 
-                                            "PRISE_BAS",
-                                            "PASSE",
-                                            "RELACHER_BAS",
-                                            "POSE_HAUT",
-                                            "PRISE_BORDURE",
-                                            "POSE_BORDURE",
-                                            "PRISE_DISTRIB",
+                                            "Prise_bas",
+                                            "Passe",
+                                            "Pose_bas",
+                                            "Pose_Haut",
+                                            "Prise_bordure",
+                                            "Pose_bordure",
+                                            "Prise_distrib",
 
-                                            "RES_PRETEST",
-                                            "RES_MES",
-                                            "RES_RANG"};
+                                            "Res_prestest",
+                                            "Res_mes",
+                                            "Res_rang"};
 
 int carreFlag = 1;
 
 
-QPointF bras[7]{};
+QPointF bras[17]{};
 
 int coordonneesBase[30][6]{ // coordonnées des échantillons {x,y,COULEUR,etat,rotation,bras}
     // etat : 0-> caché ; 1-> retourné ; 2-> debout
@@ -141,7 +141,9 @@ MainWindow::MainWindow(QWidget *parent)
               new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem,new QGraphicsPixmapItem}
     ,brasMesure{new QGraphicsRectItem,new QGraphicsRectItem}
     ,ventouse{new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,
-              new QGraphicsEllipseItem }
+              new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,
+              new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,
+              new QGraphicsEllipseItem ,new QGraphicsEllipseItem}
     ,collisionLine{new QGraphicsLineItem,new QGraphicsLineItem,new QGraphicsLineItem,new QGraphicsLineItem}
 
 {
@@ -1143,7 +1145,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 scene->removeItem(item[1]);
                 scene->removeItem(item[2]);
                 ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,0),ui->tableView->model()->data(ui->tableView->model()->index(table_ligne-1,0)).toInt()+1);
-                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,2),"PRISE_BAS");
+                ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,2),"Prise_bas");
                 ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,3),0);
                 ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,10),ui->tableView->model()->data(ui->tableView->model()->index(table_ligne-1,10)).toInt()+1);
                 ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,11),ui->tableView->model()->data(ui->tableView->model()->index(table_ligne-1,11)).toInt()+1);
@@ -1179,9 +1181,9 @@ void MainWindow::updateVisu(const QModelIndex &index)
             }
             //Fonctions correspondant au type d'action selectionnée
 
-//PRISE_BAS____________________________________________________________________________________________________________
+//Prise_bas____________________________________________________________________________________________________________
 
-            if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="PRISE_BAS")
+            if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Prise_bas")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
 
                 int brasChoisi = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
@@ -1222,8 +1224,8 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
                 }
             }
-//PASSE__________________________________________________________________________________________________________
-            if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="PASSE")
+//Passe__________________________________________________________________________________________________________
+            if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Passe")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
                 int brasChoisi = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
                 QString brasChoisiStr = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString());
@@ -1246,7 +1248,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
                         for(int J = 0;J < 30; J++){
                             if (coordonnees[J][5] == tabBrasChoisi[i] + 1){
                                 coordonnees[J][5] += 10;
-                                //coordonnees[J][4] = 2;
+                                coordonnees[J][3] = 2;
 
                             }
 
@@ -1257,8 +1259,8 @@ void MainWindow::updateVisu(const QModelIndex &index)
             }
           }
 
-//RELACHER_BAS__________________________________________________________________________________________________________
-            if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="RELACHER_BAS")
+//Pose_bas__________________________________________________________________________________________________________
+            if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Pose_bas")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
 
                 int brasChoisi = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
@@ -1292,13 +1294,90 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 }
 
             }
+//Pose_Haut__________________________________________________________________________________________________________________
+            if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Pose_Haut")
+                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
 
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="RES_PRETEST")
+                int brasChoisi = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
+                QString brasChoisiStr = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString());
+                int tabBrasChoisi[3];
+
+
+                if (brasChoisiStr == "120" || brasChoisiStr == "102" || brasChoisiStr == "012" || brasChoisiStr == "021" || brasChoisiStr == "201" )
+                    ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,3),210);
+                if (brasChoisiStr == "354" || brasChoisiStr == "453" || brasChoisiStr == "435" || brasChoisiStr == "543" || brasChoisiStr == "534" )
+                    ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,3),345);
+
+                //on determine la centaine, la dizaine et l'unité
+
+                tabBrasChoisi[0] = brasChoisi/100;
+                tabBrasChoisi[1] = (brasChoisi - 100*tabBrasChoisi[0])/10; // on enleve la centaine pour trouver la dizaine
+                tabBrasChoisi[2] = (brasChoisi - 100*tabBrasChoisi[0]) - 10*tabBrasChoisi[1]; // on enleve la centaine et la dizaine pour trouver l'unité
+
+                //on remet le bras choisi à 0 dans le tableau de coordonnées
+                for(int i = 0; i<3;i++){
+                   if(tabBrasChoisi[i] != 0 || i == 2 ){
+                        for(int J = 0;J < 30; J++){
+                            if (coordonnees[J][5] == tabBrasChoisi[i] + 11){
+
+                                coordonnees[J][5] = 0;
+                                coordonnees[J][3] = 1;
+                                coordonnees[J][0] += ptrEchantillon[i]->boundingRect().center().x() - GLOBALOFFSETX;
+                                coordonnees[J][1] += ptrEchantillon[i]->boundingRect().center().y() - GLOBALOFFSETY;
+                            }
+                        }
+                   }
+                }
+            }
+//Prise_bordure_____________________________________________________________________________________________________________
+            if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Prise_bordure")
+                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
+
+                int brasChoisi = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
+                QString brasChoisiStr = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString());
+                int tabBrasChoisi[3];
+
+                if (brasChoisiStr == "120" || brasChoisiStr == "102" || brasChoisiStr == "012" || brasChoisiStr == "021" || brasChoisiStr == "201" )
+                    ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,3),210);
+                if (brasChoisiStr == "354" || brasChoisiStr == "453" || brasChoisiStr == "435" || brasChoisiStr == "543" || brasChoisiStr == "534" )
+                    ui->tableView->model()->setData(ui->tableView->model()->index(table_ligne,3),345);
+
+
+                //on determine la centaine, la dizaine et l'unité
+
+                tabBrasChoisi[0] = brasChoisi/100;
+                tabBrasChoisi[1] = (brasChoisi - 100*tabBrasChoisi[0])/10; // on enleve la centaine pour trouver la dizaine
+                tabBrasChoisi[2] = (brasChoisi - 100*tabBrasChoisi[0]) - 10*tabBrasChoisi[1]; // on enleve la centaine et la dizaine pour trouver l'unité
+
+                // on creer le rectangle qui va contenir le rond qui correspond à la ventouse
+                QRect ellipseVentouse(0,0,54,54);
+                int echantillonAttrape;
+
+
+
+                //on verifie les collisions avec la ventouse qui correspond au bras selectionner par la centaine , la dizaine et l'unité
+                // ex : 210 va activer les bras 1 ,2 et 0
+                for(int i = 0; i<3;i++){
+                   if(tabBrasChoisi[i] != 0 || i == 2 ){
+                       ventouse[tabBrasChoisi[i]] = scene->addEllipse(ellipseVentouse);
+                       ventouse[tabBrasChoisi[i]]->setPen(greenline);
+                       echantillonAttrape = collisionVentouse(tabBrasChoisi[i],PosRotrob);
+                       if(echantillonAttrape != -1){
+                           coordonnees[echantillonAttrape][5] = tabBrasChoisi[i] + 1 + 10;
+                           bras[tabBrasChoisi[i] + 1] = ventouse[tabBrasChoisi[i] + 1]->pos();
+                       }
+                   }
+
+
+                }
+            }
+
+            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Res_prestest")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
             {
                 resDeploye[(ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt())] = true;
             }
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="RES_MES")
+            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Res_mes")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
             {
                 int carreMesure = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
@@ -1311,11 +1390,13 @@ void MainWindow::updateVisu(const QModelIndex &index)
                     ptrCarre[carreMesure]->hide();
                 }
             }
-            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="RES_RANG")
+            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Res_rang")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
             {
                 resDeploye[(ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt())] = false;
             }
+
+
 
 
 
@@ -1746,14 +1827,29 @@ void MainWindow::updateVisu(const QModelIndex &index)
                         break;
                 case 2 : ventouse[i]->moveBy((226.06)*sin(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180) , (226.06)*cos(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180));
                         break;
-                case 3 : ventouse[i]->moveBy((226.06)*sin(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180 + M_PI) , (226.06)*cos(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180 + M_PI));
+                case 5 : ventouse[i]->moveBy((226.06)*sin(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180 + M_PI) , (226.06)*cos(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180 + M_PI));
                         break;
                 case 4 : ventouse[i]->moveBy((137.5)*sin(((PosRotrob) * M_PI)/180 + M_PI) , (137.5)*cos(((PosRotrob) * M_PI)/180 + M_PI));
                         break;
-                case 5 : ventouse[i]->moveBy((226.06)*sin(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180 - M_PI) , (226.06)*cos(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180 + M_PI));
+                case 3 : ventouse[i]->moveBy((226.06)*sin(((PosRotrob) * M_PI)/180 + 28.6*M_PI/180 - M_PI) , (226.06)*cos(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180 + M_PI));
                         break;
             }
+//            switch (i + 10){
+//                case 10 : ventouse[i + 10]->moveBy((186.06)*sin(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180) , (186.06)*cos(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180));
+//                        break;
+//                case 11 : ventouse[i + 10]->moveBy((97.5)*sin(((PosRotrob) * M_PI)/180) , (97.5)*cos(((PosRotrob) * M_PI)/180));
+//                        break;
+//                case 12 : ventouse[i + 10]->moveBy((186.06)*sin(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180) , (186.06)*cos(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180));
+//                        break;
+//                case 15 : ventouse[i + 10]->moveBy((186.06)*sin(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180) , (186.06)*cos(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180));
+//                        break;
+//                case 14 : ventouse[i + 10]->moveBy((97.5)*sin(((PosRotrob) * M_PI)/180) , (97.5)*cos(((PosRotrob) * M_PI)/180));
+//                        break;
+//                case 13 : ventouse[i + 10]->moveBy((186.06)*sin(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180) , (186.06)*cos(((PosRotrob) * M_PI)/180 - 28.6*M_PI/180));
+//                        break;
+//            }
             bras[i + 1] = ventouse[i]->pos();
+            //bras[i + 11] = ventouse[i + 10]->pos();
 
 
 
@@ -1872,10 +1968,12 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
         table_ligne=futur_i;
         for(int i = 0; i < 12; ++i){
+            if(coordonnees[i][5] > 10) coordonnees[i][4] = PosRotrob - 90 ;
             afficherEchantillon(i);
 
         }
         for(int i = 18 ; i < 30; ++i){
+            if(coordonnees[i][5] > 10) coordonnees[i][4] = PosRotrob - 90;
             afficherEchantillon(i);
         }
 
@@ -2086,39 +2184,39 @@ void MainWindow::on_ExportFileButton_clicked()
             indexComboBoxAction = dataAction.indexOf(data2);
             switch(indexComboBoxAction){
 
-            case 0 : //DEPLOIEMENT
-                textStream << "160";
+            case 0 : //Deploiement
+                textStream << "170";
                 break;
 
-            case 1: //PRISE_BAS
-                textStream << "161";
+            case 1: //Prise_bas
+                textStream << "171";
                 break;
-            case 2: //PASSE
-                textStream << "162";
+            case 2: //Passe
+                textStream << "172";
                 break;
-            case 3: //RELACHER_BAS
-                textStream << "163";
+            case 3: //Pose_bas
+                textStream << "173";
                 break;
-            case 4 : //POSE_HAUT
-                textStream << "164";
+            case 4 : //Pose_Haut
+                textStream << "174";
                 break;
-            case 5 : //PRISE_BORDURE
-                textStream << "165";
+            case 5 : //Prise_bordure
+                textStream << "175";
                 break;
-            case 6 : //POSE_BORDURE
-                textStream << "166";
+            case 6 : //Pose_bordure
+                textStream << "176";
                 break;
-            case 7 : //PRISE_DISTRIB
-                textStream << "167";
+            case 7 : //Prise_distrib
+                textStream << "177";
                 break;
 
-            case 8: //RES_PRETEST
+            case 8: //Res_prestest
                 textStream << "154";
                 break;
-            case 9: //RES_MES
+            case 9: //Res_mes
                 textStream << "155";
                 break;
-            case 10: //RES_RANG
+            case 10: //Res_rang
                 textStream << "156";
                 break;
 
@@ -2428,7 +2526,17 @@ QPixmap MainWindow::determinerCouleur(int i){
 
     //on vérifie d'abord si l'échantillon doit être face caché
     if (coordonnees[i][3] == 0){
-        pixReturn.load(":/Images/AgeOfBots/vide.png");
+        switch(coordonnees[i][2]){
+        case GREEN :
+            pixReturn.load(":/Images/AgeOfBots/videV.png");
+            break;
+        case RED :
+            pixReturn.load(":/Images/AgeOfBots/videR.png");
+            break;
+        case BLUE  :
+            pixReturn.load(":/Images/AgeOfBots/videB.png");
+            break;
+        }
     }
 
     //puis on vérifie si il est debout
@@ -2474,13 +2582,13 @@ void MainWindow::afficherEchantillon(int i){
     QFont font;
     QPen pen;
     pen.setWidth(5);
-    pen.setColor(Qt::cyan);
+    pen.setColor(Qt::black);
     paint.setPen(pen);
     font.setPixelSize(50);
     paint.setFont(font);
 
     QString str = QString::number(i);
-    paint.drawText(pix.rect().center(),str);
+    paint.drawText(pix.rect().center().x() - 20,pix.rect().center().y() + 15,str);
 
 
     //si l'echantillon est pris par un bras , on met ses coordonnées égales à celle de la ventouse correspondante
@@ -2489,8 +2597,10 @@ void MainWindow::afficherEchantillon(int i){
 
 
         if(coordonnees[i][5] > 10){
-            coordonnees[i][0] = bras[coordonnees[i][5] - 10].x();
-            coordonnees[i][1] = bras[coordonnees[i][5] - 10].y();
+            coordonnees[i][0] = bras[coordonnees[i][5] - 10].x() - 50*cos(((coordonnees[i][4]) * M_PI)/180);
+            coordonnees[i][1] = bras[coordonnees[i][5] - 10].y() + 50*sin(((coordonnees[i][4]) * M_PI)/180);
+            pen.setColor(Qt::cyan);
+            paint.setPen(pen);
             paint.drawEllipse(pix.rect().center() , 54,54);
         }
         else{
@@ -2514,7 +2624,7 @@ void MainWindow::afficherEchantillon(int i){
                                  -ptrEchantillon[i]->boundingRect().center().y() + GLOBALOFFSETY);
     }
     else ptrEchantillon[i]->setOffset(-ptrEchantillon[i]->boundingRect().center().x() +35,-ptrEchantillon[i]->boundingRect().center().y() + 30);
-    //quand l'échantillon est pris par un bras , pas besoin du global offset puisque sa position est la même que les ventouse qui ont le global offset
+    //quand l'échantillon est pris par un bras du bas , pas besoin du global offset puisque sa position est la même que les ventouse qui ont le global offset
     //il faut toujours l'offset qui permet de les centrer cependant
 
     ptrEchantillon[i]->setTransformOriginPoint(ptrEchantillon[i]->boundingRect().center());//cela met le point de rotation au centre au lieu d'en haut à droite
@@ -2554,13 +2664,13 @@ int MainWindow::collisionVentouse(int i,int rotRob){
         case 2 : position[0] = (226.06)*sin(((rotRob) * M_PI)/180 + 28.6*M_PI/180) ;
                  position[1] =  (226.06)*cos(((rotRob) * M_PI)/180 + 28.6*M_PI/180);
                 break;
-        case 3 : position[0] = (226.06)*sin(((rotRob) * M_PI)/180 + 28.6*M_PI/180 + M_PI) ;
+        case 5 : position[0] = (226.06)*sin(((rotRob) * M_PI)/180 + 28.6*M_PI/180 + M_PI) ;
                  position[1] =  (226.06)*cos(((rotRob) * M_PI)/180 + 28.6*M_PI/180 + M_PI);
                 break;
         case 4 : position[0] = (137.5)*sin(((rotRob) * M_PI)/180 + M_PI) ;
                  position[1] =  (137.5)*cos(((rotRob) * M_PI)/180 + M_PI);
                 break;
-        case 5 : position[0] = (226.06)*sin(((rotRob) * M_PI)/180 + 28.6*M_PI/180 - M_PI) ;
+        case 3 : position[0] = (226.06)*sin(((rotRob) * M_PI)/180 + 28.6*M_PI/180 - M_PI) ;
                  position[1] =  (226.06)*cos(((rotRob) * M_PI)/180 - 28.6*M_PI/180 + M_PI);
                 break;
     }
@@ -2611,39 +2721,39 @@ int MainWindow::getAction(int chiffre){
     int toReturn = 0;
     switch(chiffre){
 
-    case 160 : //DEPLOIEMENT
+    case 170 : //Deploiement
         toReturn = 0 ;
         break;
 
-    case 161: //PRISE_BAS
+    case 171: //Prise_bas
         toReturn = 1  ;
         break;
-    case 162: //PASSE
+    case 172: //Passe
         toReturn = 2  ;
         break;
-    case 163: //RELACHER_BAS
+    case 173: //Pose_bas
         toReturn = 3  ;
         break;
-    case 164 : //POSE_HAUT
+    case 174 : //Pose_Haut
         toReturn = 4  ;
         break;
-    case 165 : //PRISE_BORDURE
+    case 175 : //Prise_bordure
         toReturn = 5 ;
         break;
-    case 166 : //POSE_BORDURE
+    case 176 : //Pose_bordure
         toReturn = 6 ;
         break;
-    case 167 : //PRISE_DISTRIB
+    case 177 : //Prise_distrib
         toReturn = 7 ;
         break;
 
-    case 154: //RES_PRETEST
+    case 154: //Res_prestest
         toReturn = 8 ;
         break;
-    case 155: //RES_MES
+    case 155: //Res_mes
         toReturn = 9 ;
         break;
-    case 156: //RES_RANG
+    case 156: //Res_rang
         toReturn = 10 ;
         break;
     }

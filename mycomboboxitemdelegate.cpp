@@ -64,21 +64,21 @@ void MyComboBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index
         else if(model->data(model->index(index.row(), 1),Qt::DisplayRole).toString().contains("Action"))
         {
             //chasse neige
-            cb->addItem(QString("DEPLOIEMENT"));
+            cb->addItem(QString("Deploiement"));
 
             //action liées aux bras
-            cb->addItem(QString("PRISE_BAS"));
-            cb->addItem(QString("PASSE"));
-            cb->addItem(QString("RELACHER_BAS"));
-            cb->addItem(QString("POSE_HAUT"));
-            cb->addItem(QString("PRISE_BORDURE"));
-            cb->addItem(QString("POSE_BORDURE"));
-            cb->addItem(QString("PRISE_DISTRIB"));
+            cb->addItem(QString("Prise_bas"));
+            cb->addItem(QString("Passe"));
+            cb->addItem(QString("Pose_bas"));
+            cb->addItem(QString("Pose_Haut"));
+            cb->addItem(QString("Prise_bordure"));
+            cb->addItem(QString("Pose_bordure"));
+            cb->addItem(QString("Prise_distrib"));
 
             //actions liées aux bras de mesures
-            cb->addItem(QString("RES_PRETEST"));
-            cb->addItem(QString("RES_MES"));
-            cb->addItem(QString("RES_RANG"));
+            cb->addItem(QString("Res_prestest"));
+            cb->addItem(QString("Res_mes"));
+            cb->addItem(QString("Res_rang"));
 
             cb->setCurrentText(model->data(index).toString());
         }
