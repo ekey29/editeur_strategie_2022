@@ -219,12 +219,12 @@ void MainWindow::initVisu()
     QPixmap robot(":/Images/AgeOfBots/ROB2020.png");
 
     robot1 = scene->addPixmap(robot);
-    robot1->setOffset(-robot1->boundingRect().center().x() + GLOBALOFFSETX,
+    robot1->setOffset(-robot1->boundingRect().center().x() + GLOBALOFFSETX + 20,
                       -robot1->boundingRect().center().y() + GLOBALOFFSETY + 45);
     robot1->setPos(0,0); //Le robot est positionné
     robot1->setRotation(90);
     robotdep = scene->addPixmap(robot);
-    robotdep->setOffset(-robotdep->boundingRect().center().x() + GLOBALOFFSETX,
+    robotdep->setOffset(-robotdep->boundingRect().center().x() + GLOBALOFFSETX + 20,
                         -robotdep->boundingRect().center().y() + GLOBALOFFSETY + 45);
     robotdep->setPos(0,0); //Le robot est positionné
     robotdep->setRotation(90);
@@ -1372,6 +1372,11 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 }
             }
 
+            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Prise_distrib")
+                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
+
+            }
+
             else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Res_prestest")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
             {
@@ -1887,7 +1892,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
             if(resDeploye[1]){
                 scene->removeItem(brasMesure[1]); // on supprime le bras
 
-                int signeoffset1;
+
                 QRect rect1(0,0,100,150);
 
                 //on ajoutre le bras et place son point de transformation au point de contact avec le robot
@@ -1896,8 +1901,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 brasMesure[1]->setTransformOriginPoint(brasMesure[1]->boundingRect().center().x(),0);
 
                 //on détermine l'offset
-                if(PosRotrob <= 90 || PosRotrob >= 270) signeoffset1 = 1;
-                else signeoffset1 = 0;
+
 
                 //les sin et les cos permettent au bras de se déplacer sur un cercle pour suivre la rotation du robot
                 // -60 et -5 sont la pour corriger manuellement quelques imperfection pour s'assurer que le bras est bien centré

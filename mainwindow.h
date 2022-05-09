@@ -31,7 +31,7 @@
 #define LONGUEUR_ROBOT 185
 #define LARGEUR_ROBOT 270
 #define LARGEUR_VENTOUSE 150
-#define DIAG_ROBOT1 327
+#define DIAG_ROBOT1 327.3
 
 #define OFF 0
 #define ON 1
@@ -97,7 +97,7 @@ private:
     QGraphicsPixmapItem *ptrEchantillon[30],*ptrCarre[10];
     QGraphicsRectItem *brasMesure[2];
     QGraphicsEllipseItem *ventouse[17];
-    QGraphicsLineItem *collisionLine[4];
+    QGraphicsLineItem *collisionLine[6],*ventouseVerticale[2];
     QPointF switchPosVentouse(int i , int PosRotrob);
 
 
