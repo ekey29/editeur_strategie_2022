@@ -42,43 +42,43 @@ int coordonneesBase[30][6]{ // coordonnées des échantillons {x,y,COULEUR,etat,
     //0 ->11 échantillon au sol ; 12->17 site de fouilles ;18->29 distributeurs;
     // le dernier paramètre correspond au bras qui a attrapé l'échantillon : 0 -> aucun ; 1 à 6 -> bras du bas ; 11 à 16 -> bras du haut
 
-    {900,555,BLUE,0,0,0}, // au sol côté jaune
+    {900,555,BLUE,0,0,0}, // au sol côté jaune 00
     {830,679,GREEN,0,0,0},
     {900,805,RED,0,0,0},
 
-    {-65,300,GREEN,0,0,0}, // en hauteur côté jaune
+    {-65,300,GREEN,0,0,0}, // en hauteur côté jaune 03
     {121,1688,BLUE,0,-45,0},
     {312,1879,RED,0,-45,0},
 
-    {2100,555,BLUE,0,0,0}, // au sol côté violet
+    {2100,555,BLUE,0,0,0}, // au sol côté violet 06
     {2170,679,GREEN,0,0,0},
     {2100,805,RED,0,0,0},
 
-    {3065,300,GREEN,0,0,0}, // en hauteur côté violet
+    {3065,300,GREEN,0,0,0}, // en hauteur côté violet 09
     {2879,1688,BLUE,0,0,0},
     {2688,1879,RED,0,0,0},
 
-    {0,0,GREEN,1,0,0},//site de fouille côté jaune
+    {0,0,GREEN,1,0,0},//site de fouille côté jaune 12
     {0,0,RED,1,0,0},
     {0,0,BLUE,1,0,0},
 
-    {0,0,GREEN,1,0,0},//site de fouille côté violet
+    {0,0,GREEN,1,0,0},//site de fouille côté violet 15
     {0,0,RED,1,0,0},
     {0,0,BLUE,1,0,0},
 
-    {22,1250,RED,2,0,0},//distributeurs bas côté jaune
+    {22,1250,RED,2,0,0},//distributeurs bas côté jaune 18
     {37,1250,GREEN,2,0,0},
     {52,1250,BLUE,2,0,0},
 
-    {1350,22,RED,2,90,0},//distributeurs haut côté jaune
+    {1350,22,RED,2,90,0},//distributeurs haut côté jaune 21
     {1350,37,GREEN,2,90,0},
     {1350,52,BLUE,2,90,0},
 
-    {3000-22,1250,RED,2,0,0},//distributeurs bas côté violet
+    {3000-22,1250,RED,2,0,0},//distributeurs bas côté violet 24
     {2985-22,1250,GREEN,2,0,0},
     {2970-22,1250,BLUE,2,0,0},
 
-    {1650,22,RED,2,90,0},//distributeurs haut côté violet
+    {1650,22,RED,2,90,0},//distributeurs haut côté violet 27
     {1650,37,GREEN,2,90,0},
     {1650,52,BLUE,2,90,0}
 };
@@ -145,6 +145,7 @@ MainWindow::MainWindow(QWidget *parent)
               new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,new QGraphicsEllipseItem,new QGraphicsEllipseItem ,
               new QGraphicsEllipseItem ,new QGraphicsEllipseItem}
     ,collisionLine{new QGraphicsLineItem,new QGraphicsLineItem,new QGraphicsLineItem,new QGraphicsLineItem}
+    ,brasDistrib{new QGraphicsLineItem , new QGraphicsLineItem}
 
 {
 
@@ -482,6 +483,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
 
     bool resDeploye[2] {false,false};
+    bool chasseNeigeFlag[2]{true,true};
 
     resetPosEchantillon();
 
@@ -600,14 +602,11 @@ void MainWindow::updateVisu(const QModelIndex &index)
                     coordonnees[i][1] = QRandomGenerator::system()->bounded(1200 + 75,1550 - 75); // ils sont là pour s'assurer que léchantillon ne dépasse pas
                     coordonnees[i][4] = QRandomGenerator::system()->bounded(0,361);
 
+                    coordonneesBase[i][0] = coordonnees[i][0];
+                    coordonneesBase[i][1] = coordonnees[i][1];
+                    coordonneesBase[i][4] = coordonnees[i][4];
+
                     afficherEchantillon(i);
-
-
-
-
-
-
-
 
                 }
 
@@ -623,6 +622,10 @@ void MainWindow::updateVisu(const QModelIndex &index)
                     coordonnees[i][0] = QRandomGenerator::system()->bounded(1850 + 65 ,2200 - 65); // 65 et 75 correspondent a la moitié d'un échantillon
                     coordonnees[i][1] = QRandomGenerator::system()->bounded(1200 + 75,1550 - 75); // ils sont là pour s'assurer que léchantillon ne dépasse pas
                     coordonnees[i][4] = QRandomGenerator::system()->bounded(0,361);
+
+                    coordonneesBase[i][0] = coordonnees[i][0];
+                    coordonneesBase[i][1] = coordonnees[i][1];
+                    coordonneesBase[i][4] = coordonnees[i][4];
                     afficherEchantillon(i);
 
                 }
@@ -678,6 +681,9 @@ void MainWindow::updateVisu(const QModelIndex &index)
             scene->removeItem(collisionLine[i]);
         for(int i=0;i<6;i++){
             scene->removeItem(ventouse[i]);
+        }
+        for(int i=0;i<2;i++){
+            scene->removeItem(brasDistrib[i]);
         }
 
 
@@ -749,6 +755,31 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 // Tracé Ligne de droite
                 item[2] = scene->addLine(int(PosYrobPres - LARGEUR_ROBOT/2*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrobPres - LARGEUR_ROBOT/2*cos(((PosRotrobPres-90) * M_PI)/180))
                 ,int(PosYrob - LARGEUR_ROBOT/2*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrob - LARGEUR_ROBOT/2*cos(((PosRotrobPres-90) * M_PI)/180)),redline);
+
+                //deux lignes en plus pour la collision des chasses neiges
+
+                item[3] = scene->addLine(int(PosYrobPres + LARGEUR_ROBOT*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrobPres + LARGEUR_ROBOT*cos(((PosRotrobPres-90) * M_PI)/180))
+                ,int(PosYrob + LARGEUR_ROBOT*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrob + LARGEUR_ROBOT*cos(((PosRotrobPres-90) * M_PI)/180)),redline);
+                // Tracé Ligne de droite
+                item[4] = scene->addLine(int(PosYrobPres - LARGEUR_ROBOT*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrobPres - LARGEUR_ROBOT*cos(((PosRotrobPres-90) * M_PI)/180))
+                ,int(PosYrob - LARGEUR_ROBOT*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrob - LARGEUR_ROBOT*cos(((PosRotrobPres-90) * M_PI)/180)),redline);
+                if(chasseNeigeFlag[0]){
+                    for(int i=0;i<4;i++){
+                        if(item[i]->collidesWithItem(ptrEchantillon[i + 12])){
+                            qDebug() << "site de fouille jaune";
+                            coordonnees[12][1] += 4000;
+                            coordonnees[13][1] += 4000;
+                            coordonnees[14][1] += 4000;
+
+                        }
+                        else if(item[i]->collidesWithItem(ptrEchantillon[i + 15])){
+                            qDebug() << "site de fouille violet";
+                            coordonnees[15][1] += 4000;
+                            coordonnees[16][1] += 4000;
+                            coordonnees[17][1] += 4000;
+                        }
+                    }
+                }
 
             }
             // calcul si le mouvement a permis de prendre un gobelet
@@ -1372,10 +1403,57 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 }
             }
 
+
+//Prise_distrib_______________________________________________________________________________________________________________________
             else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Prise_distrib")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
+                QLine ligneDistrib(0,0,232,0);
+
+                //on fait apparaitre le bon bras sur la scene
+                int brasChoisi = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt());
+
+                brasDistrib[brasChoisi] = scene->addLine(ligneDistrib);
+
+                //on le place au bon endroit
+                brasDistrib[brasChoisi]->setPen(redline);
+                brasDistrib[brasChoisi]->setPos(robot1->pos() + robot1->boundingRect().center());
+                brasDistrib[brasChoisi]->setRotation(90 - PosRotrob + 180*brasChoisi); //on fait un tour complet si on choisi le bras 1
+
+                //on vérifie la collision avec l'échantillon le plus plus éloigné de chaque distributeur (pour être sur d'être a la bonne distance)
+
+                if(brasDistrib[brasChoisi]->collidesWithItem(ptrEchantillon[18])){ //jaune bas
+                    coordonnees[20][5] = 12;
+                    coordonnees[19][5] = 13;
+                    coordonnees[18][5] = 11;
+                }
+                if(brasDistrib[brasChoisi]->collidesWithItem(ptrEchantillon[21])){ //jaune bas
+                    coordonnees[23][5] = 12;
+                    coordonnees[22][5] = 13;
+                    coordonnees[21][5] = 11;
+                }
+                if(brasDistrib[brasChoisi]->collidesWithItem(ptrEchantillon[24])){ //jaune bas
+                    coordonnees[26][5] = 12;
+                    coordonnees[25][5] = 13;
+                    coordonnees[24][5] = 11;
+                }
+                if(brasDistrib[brasChoisi]->collidesWithItem(ptrEchantillon[27])){ //jaune bas
+                    coordonnees[29][5] = 12;
+                    coordonnees[28][5] = 13;
+                    coordonnees[27][5] = 11;
+                }
+
 
             }
+//Deploiement________________________________________________________________________________________________________________
+            else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Deploiement")
+                &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!="")){
+                int ouvertFerme = (ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toInt()); // on met a 0 pour ouvrir a 1 pour fermé
+
+                chasseNeigeFlag[0] = ouvertFerme;
+
+
+            }
+
 
             else if(((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,2)).toString())=="Res_prestest")
                 &&((ui->tableView->model()->data(ui->tableView->model()->index(table_ligne,3)).toString())!=""))
@@ -1971,15 +2049,12 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
 
         table_ligne=futur_i;
-        for(int i = 0; i < 12; ++i){
+        for(int i = 0; i < 30; ++i){
             if(coordonnees[i][5] > 10) coordonnees[i][4] = PosRotrob - 90 ;
             afficherEchantillon(i);
 
         }
-        for(int i = 18 ; i < 30; ++i){
-            if(coordonnees[i][5] > 10) coordonnees[i][4] = PosRotrob - 90;
-            afficherEchantillon(i);
-        }
+
 
     }
 
@@ -2582,21 +2657,22 @@ void MainWindow::afficherEchantillon(int i){
     QPixmap pix(determinerCouleur(i));
 
     //on dessine son numéro dans la table de coordonnées , très utile pour le débug
-    QPainter paint(&pix);
-    QFont font;
-    QPen pen;
-    pen.setWidth(5);
-    pen.setColor(Qt::black);
-    paint.setPen(pen);
-    font.setPixelSize(50);
-    paint.setFont(font);
 
-    QString str = QString::number(i);
-    paint.drawText(pix.rect().center().x() - 20,pix.rect().center().y() + 15,str);
 
 
     //si l'echantillon est pris par un bras , on met ses coordonnées égales à celle de la ventouse correspondante
     if (coordonnees[i][5] != 0){
+        QPainter paint(&pix);
+        QFont font;
+        QPen pen;
+        pen.setWidth(5);
+        pen.setColor(Qt::black);
+        paint.setPen(pen);
+        font.setPixelSize(50);
+        paint.setFont(font);
+
+        QString str = QString::number(coordonnees[i][5] - 1);
+        paint.drawText(pix.rect().center().x() - 20,pix.rect().center().y() + 15,str);
 
 
 
@@ -2707,7 +2783,6 @@ int MainWindow::collisionVentouse(int i,int rotRob){
     for(int i=0;i<4;i++)
         collisionLine[i]->hide();
     return toReturn;
-
 }
 
 void MainWindow::resetPosEchantillon(void){

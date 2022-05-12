@@ -97,7 +97,7 @@ private:
     QGraphicsPixmapItem *ptrEchantillon[30],*ptrCarre[10];
     QGraphicsRectItem *brasMesure[2];
     QGraphicsEllipseItem *ventouse[17];
-    QGraphicsLineItem *collisionLine[6],*ventouseVerticale[2];
+    QGraphicsLineItem *collisionLine[6],*ventouseVerticale[2], *brasDistrib[2];
     QPointF switchPosVentouse(int i , int PosRotrob);
 
 
