@@ -94,6 +94,7 @@ private:
     QGraphicsEllipseItem *ellipseRandom;
 
     //attributs spécifiques à l'année 2022
+    int chasseNeigeFlag[2]{false,false};
     QGraphicsPixmapItem *ptrEchantillon[30],*ptrCarre[10];
     QGraphicsRectItem *brasMesure[2];
     QGraphicsEllipseItem *ventouse[17];

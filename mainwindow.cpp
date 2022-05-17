@@ -483,7 +483,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
 
     bool resDeploye[2] {false,false};
-    bool chasseNeigeFlag[2]{true,true};
+
 
     resetPosEchantillon();
 
@@ -764,19 +764,25 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 item[4] = scene->addLine(int(PosYrobPres - LARGEUR_ROBOT*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrobPres - LARGEUR_ROBOT*cos(((PosRotrobPres-90) * M_PI)/180))
                 ,int(PosYrob - LARGEUR_ROBOT*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrob - LARGEUR_ROBOT*cos(((PosRotrobPres-90) * M_PI)/180)),redline);
                 if(chasseNeigeFlag[0]){
-                    for(int i=0;i<4;i++){
-                        if(item[i]->collidesWithItem(ptrEchantillon[i + 12])){
-                            qDebug() << "site de fouille jaune";
-                            coordonnees[12][1] += 4000;
-                            coordonnees[13][1] += 4000;
-                            coordonnees[14][1] += 4000;
+                    for(int i=0;i<5;i++){
+                        for(int j =0;j<3;j++){
+                            if(item[i]->collidesWithItem(ptrEchantillon[i + 12])){
+                                qDebug() << "site de fouille jaune";
+                                coordonneesBase[12][1] += 4000;
+                                coordonneesBase[13][1] += 4000;
+                                coordonneesBase[14][1] += 4000;
 
-                        }
-                        else if(item[i]->collidesWithItem(ptrEchantillon[i + 15])){
-                            qDebug() << "site de fouille violet";
-                            coordonnees[15][1] += 4000;
-                            coordonnees[16][1] += 4000;
-                            coordonnees[17][1] += 4000;
+
+                                chasseNeigeFlag[1] = true;
+
+                            }
+                            else if(item[i]->collidesWithItem(ptrEchantillon[i + 15])){
+                                qDebug() << "site de fouille violet";
+                                coordonneesBase[15][1] += 4000;
+                                coordonneesBase[16][1] += 4000;
+                                coordonneesBase[17][1] += 4000;
+                                chasseNeigeFlag[1] = true;
+                            }
                         }
                     }
                 }
