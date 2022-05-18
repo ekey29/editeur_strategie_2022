@@ -12,7 +12,6 @@
         <file>Images/AgeOfBots/vert.png</file>
         <file>Images/AgeOfBots/vide.png</file>
         <file>Images/AgeOfBots/debout.png</file>
-        <file>Images/AgeOfBots/ROB2020.png</file>
         <file>Images/AgeOfBots/ROB2020_save.png</file>
         <file>Images/AgeOfBots/deboutB.png</file>
         <file>Images/AgeOfBots/deboutR.png</file>
@@ -20,5 +19,6 @@
         <file>Images/AgeOfBots/videV.png</file>
         <file>Images/AgeOfBots/videR.png</file>
         <file>Images/AgeOfBots/videB.png</file>
+        <file>Images/AgeOfBots/ROB2020.png</file>
     </qresource>
 </RCC>

@@ -247,8 +247,6 @@ void MainWindow::initVisu()
     lineMap1 = scene->addLine(OBSTACLE_1_X,OBSTACLE_1_Y,OBSTACLE_1_X,LARGEUR_TABLE,redline);
     lineMap2 = scene->addLine(OBSTACLE_2_X,OBSTACLE_2_Y,OBSTACLE_2_X,LARGEUR_TABLE,redline);
     lineMap3 = scene->addLine(OBSTACLE_3_X,OBSTACLE_3_Y,OBSTACLE_3_X,LARGEUR_TABLE,redline);
-    lineRandom = scene->addLine(1500,0,1500,500,blackline);
-    ellipseRandom = scene->addEllipse(1000,-500,1000,1000,blackline);
     lineUp->hide();
     lineDown->hide();
     lineRight->hide();
@@ -760,10 +758,16 @@ void MainWindow::updateVisu(const QModelIndex &index)
 
                 item[3] = scene->addLine(int(PosYrobPres + LARGEUR_ROBOT*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrobPres + LARGEUR_ROBOT*cos(((PosRotrobPres-90) * M_PI)/180))
                 ,int(PosYrob + LARGEUR_ROBOT*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrob + LARGEUR_ROBOT*cos(((PosRotrobPres-90) * M_PI)/180)),redline);
-                // Tracé Ligne de droite
+                item[3]->hide();
+
                 item[4] = scene->addLine(int(PosYrobPres - LARGEUR_ROBOT*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrobPres - LARGEUR_ROBOT*cos(((PosRotrobPres-90) * M_PI)/180))
                 ,int(PosYrob - LARGEUR_ROBOT*sin(((PosRotrobPres-90) * M_PI)/180)), int(PosXrob - LARGEUR_ROBOT*cos(((PosRotrobPres-90) * M_PI)/180)),redline);
+                item[4]->hide();
+
                 if(chasseNeigeFlag[0]){
+                    qDebug() << "NIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIK";
+                    item[4]->setVisible(true);
+                    item[3]->setVisible(true);
                     for(int i=0;i<5;i++){
                         for(int j =0;j<3;j++){
                             if(item[i]->collidesWithItem(ptrEchantillon[i + 12])){
@@ -1423,6 +1427,7 @@ void MainWindow::updateVisu(const QModelIndex &index)
                 //on le place au bon endroit
                 brasDistrib[brasChoisi]->setPen(redline);
                 brasDistrib[brasChoisi]->setPos(robot1->pos() + robot1->boundingRect().center());
+                brasDistrib[brasChoisi]->moveBy(GLOBALOFFSETX,-10);
                 brasDistrib[brasChoisi]->setRotation(90 - PosRotrob + 180*brasChoisi); //on fait un tour complet si on choisi le bras 1
 
                 //on vérifie la collision avec l'échantillon le plus plus éloigné de chaque distributeur (pour être sur d'être a la bonne distance)
