@@ -74,11 +74,17 @@ void MyComboBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index
             cb->addItem(QString("Prise_bordure"));
             cb->addItem(QString("Pose_bordure"));
             cb->addItem(QString("Prise_distrib"));
+            cb->addItem(QString("Ranger"));
 
             //actions liées aux bras de mesures
             cb->addItem(QString("Res_prestest"));
             cb->addItem(QString("Res_mes"));
             cb->addItem(QString("Res_rang"));
+
+            //actions liées à la statuette
+            cb->addItem(QString("Pre_prise"));
+            cb->addItem(QString("Prise_statuette"));
+            cb->addItem(QString("Pose_statuette"));
 
             cb->setCurrentText(model->data(index).toString());
         }

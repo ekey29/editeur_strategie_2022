@@ -27,12 +27,17 @@ const QStringList MainWindow::dataAction = {"Deploiement",
                                             "Prise_bordure",
                                             "Pose_bordure",
                                             "Prise_distrib",
+                                            "Ranger",
 
                                             "Res_prestest",
                                             "Res_mes",
-                                            "Res_rang"};
+                                            "Res_rang"
 
-int carreFlag = 1;
+                                            ,"Pre_prise"
+                                            ,"Prise_statuette"
+                                            ,"Pose_statuette"};
+
+int carreFlag = 1 , robot2Flag = 0;
 
 
 QPointF bras[17]{};
@@ -2299,15 +2304,28 @@ void MainWindow::on_ExportFileButton_clicked()
             case 7 : //Prise_distrib
                 textStream << "177";
                 break;
+            case 8 : //Ranger
+                textStream << "178";
+                break;
 
-            case 8: //Res_prestest
+            case 9: //Res_prestest
                 textStream << "154";
                 break;
-            case 9: //Res_mes
+            case 10: //Res_mes
                 textStream << "155";
                 break;
-            case 10: //Res_rang
+            case 11: //Res_rang
                 textStream << "156";
+                break;
+
+            case 12: //Pre_prise
+                textStream << "180";
+                break;
+            case 13: //Prise_statuette
+                textStream << "181";
+                break;
+            case 14: //Pose_statuette
+                textStream << "182";
                 break;
 
 
@@ -2836,16 +2854,66 @@ int MainWindow::getAction(int chiffre){
     case 177 : //Prise_distrib
         toReturn = 7 ;
         break;
-
-    case 154: //Res_prestest
+    case 178: //Ranger
         toReturn = 8 ;
         break;
-    case 155: //Res_mes
+
+    case 154: //Res_prestest
         toReturn = 9 ;
         break;
-    case 156: //Res_rang
+    case 155: //Res_mes
         toReturn = 10 ;
         break;
+    case 156: //Res_rang
+        toReturn = 11 ;
+        break;
+
+    case 180: //Pre_prise
+        toReturn = 12 ;
+        break;
+    case 181: //Prise_statuette
+        toReturn = 13 ;
+        break;
+    case 182: //Pose_statuette
+        toReturn = 14 ;
+        break;
+
+
     }
     return toReturn;
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+
+
+        QPixmap robot(":/Images/AgeOfBots/ROB2020.png");
+
+        switch(robot2Flag){
+        case 0 :
+            robot2Flag++;
+            break;
+
+        case 1:
+
+            robot2 =  scene->addPixmap(robot);
+
+            robot2->setOffset(GLOBALOFFSETX - robot2->boundingRect().center().x(),GLOBALOFFSETY - robot2->boundingRect().center().y());
+            robot2->setTransformOriginPoint(robot2->boundingRect().center());
+
+            robot2->setPos(ui->secondX->value(),ui->secondY->value());
+            robot2->setRotation(ui->secondTheta->value());
+
+            robot2Flag++;
+
+            break;
+
+        default://case 2:
+
+            scene->removeItem(robot2);
+            robot2Flag = 1;
+            break;
+
+        }
+}
+

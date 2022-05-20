@@ -81,7 +81,7 @@ private:
     //attributs commune à chaque année
     QGraphicsScene *scene;
     QGraphicsPixmapItem *image;
-    QGraphicsPixmapItem *robot1, *robotdep;
+    QGraphicsPixmapItem *robot1, *robotdep, *robot2;
     QGraphicsLineItem *lineUp;
     QGraphicsLineItem *lineDown;
     QGraphicsLineItem *lineRight;
@@ -147,5 +147,6 @@ private slots:
     void on_ExportFileButton_clicked();
     void on_ImportFileButton_clicked();
 
+    void on_pushButton_clicked();
 };
 #endif // MAINWINDOW_H
